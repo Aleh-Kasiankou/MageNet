@@ -1,6 +1,5 @@
 ﻿using MageNet.Persistence.AbstractModels.ModelEnums;
 using MageNet.Persistence.AbstractModels.ModelInterfaces;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace MageNet.Persistence.Models;
 

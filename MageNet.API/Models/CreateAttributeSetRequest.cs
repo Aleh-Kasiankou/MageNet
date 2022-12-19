@@ -1,12 +1,10 @@
 ﻿using MageNet.Persistence.AbstractModels.ModelInterfaces;
 
-namespace MageNet.Persistence.Models;
+namespace MageNet.Models;
 
-public class AttributeSet
+public class CreateAttributeSetRequest
 {
-    public Guid AttributeSetId { get; set; }
     public string Name { get; set; }
     public Guid EntityId { get; set; }
-    public Entity Entity { get; set; }
     public virtual IEnumerable<IAttribute<IEntity>> Attributes { get; set; }
 }
