@@ -2,8 +2,7 @@
 
 public enum AttributeType
 {
-    Text = 1,
-    Price = 2,
-    
-    
+    Price = 1,
+    Text = 2,
+    Selectable = 3
 }
