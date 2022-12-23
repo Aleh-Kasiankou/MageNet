@@ -4,9 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace MageNetServices.DI;
 
-public static class DependencyInjector
+public static class DependencyHandler
 {
-    public static IServiceCollection InjectDbContext(this IServiceCollection services, string connectionString)
+    public static IServiceCollection RegisterDbContext(this IServiceCollection services, string connectionString)
     {
         services.AddDbContext<MageNetDbContext>(options => options.UseSqlServer(connectionString));
         return services;
