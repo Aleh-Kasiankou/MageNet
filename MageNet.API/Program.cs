@@ -9,6 +9,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.RegisterDbContext(builder.Configuration.GetConnectionString("default"));
+builder.Services.RegisterRepositoryServices();
+builder.Services.RegisterValidationServices();
 
 var app = builder.Build();
 

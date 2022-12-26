@@ -1,5 +1,5 @@
-﻿using MageNet.Persistence.AbstractModels.ModelEnums;
-using MageNet.Persistence.AbstractModels.ModelInterfaces;
+﻿using MageNet.Persistence.Models.AbstractModels.ModelEnums;
+using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 
 namespace MageNet.Persistence.Models;
 

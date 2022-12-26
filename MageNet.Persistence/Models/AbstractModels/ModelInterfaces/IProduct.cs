@@ -1,7 +1,6 @@
-﻿using MageNet.Persistence.AbstractModels.ModelEnums;
-using MageNet.Persistence.Models;
+﻿using MageNet.Persistence.Models.AbstractModels.ModelEnums;
 
-namespace MageNet.Persistence.AbstractModels.ModelInterfaces;
+namespace MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 
 public interface IProduct : IEntity
 {

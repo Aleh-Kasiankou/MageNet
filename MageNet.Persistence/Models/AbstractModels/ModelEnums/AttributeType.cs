@@ -1,4 +1,4 @@
-﻿namespace MageNet.Persistence.AbstractModels.ModelEnums;
+﻿namespace MageNet.Persistence.Models.AbstractModels.ModelEnums;
 
 public enum AttributeType
 {

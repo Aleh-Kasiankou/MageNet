@@ -1,6 +1,4 @@
-﻿using MageNet.Persistence.Models;
-
-namespace MageNet.Persistence.AbstractModels.ModelInterfaces;
+﻿namespace MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 
 public interface IEntity
 {
