@@ -1,5 +1,4 @@
 ﻿using MageNetServices.AttributeRepository;
-using MageNetServices.AttributeRepository.DTO;
 using MageNetServices.AttributeRepository.DTO.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,37 +16,71 @@ public class AttributeController : ControllerBase
     }
 
     [HttpGet]
-    public IEnumerable<AttributeWithData> GetProductAttributes()
+    public IActionResult GetProductAttributes()
     {
-        return _attributeRepository.GetAttributes();
+        try
+        {
+            return Ok(_attributeRepository.GetAttributes());
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpGet("{guid:guid}")]
-    public AttributeWithData GetProductAttributeById(Guid guid)
+    public IActionResult GetProductAttributeById(Guid guid)
     {
-        return _attributeRepository.GetAttributeById(guid);
+        try
+        {
+            return Ok(_attributeRepository.GetAttributeById(guid));
+        }
+        catch (Exception e)
+        {
+            return NotFound(e.Message);
+        }
     }
 
     [HttpPost]
     public IActionResult PostAttribute([FromBody] PostAttributeWithData attributeWithData)
     {
-        return Ok(_attributeRepository.CreateNewAttribute(attributeWithData));
+        try
+        {
+            return Ok(_attributeRepository.CreateNewAttribute(attributeWithData));
+        }
+
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
-    
 
     [HttpPut]
     public IActionResult PutProductAttribute([FromBody] AttributeWithData updatedAttributeWithData)
     {
-        return Ok(_attributeRepository.UpdateAttribute(updatedAttributeWithData));
+        try
+        {
+            return Ok(_attributeRepository.UpdateAttribute(updatedAttributeWithData));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
-    
 
     [HttpDelete("{guid:guid}")]
     public IActionResult DeleteProductAttribute([FromRoute] Guid guid)
     {
-        _attributeRepository.DeleteAttributeById(guid);
-        return NoContent();
+        try
+        {
+            _attributeRepository.DeleteAttributeById(guid);
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            return NotFound(e.Message);
+        }
     }
 }
