@@ -68,20 +68,20 @@ public class MageNetDbContext : DbContext
         modelBuilder.Entity<PriceAttribute>().Property(x => x.DefaultValue).HasColumnType("decimal")
             .HasPrecision(16, 6);
         modelBuilder.Entity<PriceAttribute>().HasOne(x => x.Attribute)
-            .WithOne().HasForeignKey<PriceAttribute>(x => x.AttributeId);
+            .WithOne().HasForeignKey<PriceAttribute>(x => x.AttributeId).OnDelete(DeleteBehavior.Cascade);
 
 
         modelBuilder.Entity<TextAttribute>().HasKey(x => x.TextAttributeId);
         modelBuilder.Entity<TextAttribute>().Property(x => x.DefaultValue).IsRequired();
         modelBuilder.Entity<TextAttribute>().Property(x => x.DefaultValue).HasColumnType("nvarchar(255)");
         modelBuilder.Entity<TextAttribute>().HasOne(x => x.Attribute)
-            .WithOne().HasForeignKey<TextAttribute>(x => x.AttributeId);
+            .WithOne().HasForeignKey<TextAttribute>(x => x.AttributeId).OnDelete(DeleteBehavior.Cascade);
 
 
         modelBuilder.Entity<SelectableAttribute>().HasKey(x => x.SelectableAttributeId);
         modelBuilder.Entity<SelectableAttribute>().Property(x => x.IsMultipleSelect).IsRequired();
         modelBuilder.Entity<SelectableAttribute>().HasOne(x => x.Attribute)
-            .WithOne().HasForeignKey<SelectableAttribute>(x => x.AttributeId);
+            .WithOne().HasForeignKey<SelectableAttribute>(x => x.AttributeId).OnDelete(DeleteBehavior.Cascade);
 
 
         modelBuilder.Entity<SelectableAttributeValue>().HasKey(x => x.SelectableAttributeValueId);
