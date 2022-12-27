@@ -1,10 +1,9 @@
-﻿using MageNetServices.AttributeRepository.DTO;
-using MageNetServices.AttributeRepository.DTO.Attributes;
+﻿using MageNetServices.AttributeRepository.DTO.Attributes;
 using Attribute = MageNet.Persistence.Models.Attributes.Attribute;
 
-namespace MageNetServices.AttributeRepository;
+namespace MageNetServices.AttributeRepository.AttributeBuilder;
 
-public interface IAttributeDataProvider
+public interface IAttributeBuilder
 {
     AttributeWithData GetAttributeWithData(Attribute attribute);
 

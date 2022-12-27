@@ -2,6 +2,7 @@
 using MageNet.Persistence;
 using MageNet.Persistence.Models.AbstractModels.ModelEnums;
 using MageNet.Persistence.Models.Attributes;
+using MageNetServices.AttributeRepository.AttributeBuilder;
 using MageNetServices.AttributeRepository.DTO.Attributes;
 using MageNetServices.AttributeValidator;
 
@@ -10,21 +11,21 @@ namespace MageNetServices.AttributeRepository;
 public class AttributeRepository : IAttributeRepository
 {
     private readonly MageNetDbContext _dbContext;
-    private readonly IAttributeDataProvider _attributeDataProvider;
+    private readonly IAttributeBuilder _attributeBuilder;
     private readonly IAttributeValidator _attributeValidator;
 
     public AttributeRepository(MageNetDbContext dbContext,
         IAttributeValidator attributeValidator)
     {
         _dbContext = dbContext;
-        _attributeDataProvider = new AttributeDataProvider(dbContext);
+        _attributeBuilder = new AttributeBuilder.AttributeBuilder(dbContext);
         _attributeValidator = attributeValidator;
     }
 
     public IEnumerable<AttributeWithData> GetAttributes()
     {
         var attributesWithoutDetails = _dbContext.Attributes.ToArray();
-        return attributesWithoutDetails.Select(x => _attributeDataProvider.GetAttributeWithData(x));
+        return attributesWithoutDetails.Select(x => _attributeBuilder.GetAttributeWithData(x));
     }
 
     public AttributeWithData GetAttributeById(Guid guid)
@@ -32,7 +33,7 @@ public class AttributeRepository : IAttributeRepository
         var attributeWithoutDetails = _dbContext.Attributes.FirstOrDefault(x => x.AttributeId == guid);
         if (attributeWithoutDetails != null)
         {
-            return _attributeDataProvider.GetAttributeWithData(attributeWithoutDetails);
+            return _attributeBuilder.GetAttributeWithData(attributeWithoutDetails);
         }
         else
         {
@@ -62,7 +63,7 @@ public class AttributeRepository : IAttributeRepository
 
         if (isValid)
         {
-            return _attributeDataProvider.CreateAttributeWithData(attributeWithData);
+            return _attributeBuilder.CreateAttributeWithData(attributeWithData);
         }
 
         else
@@ -82,7 +83,7 @@ public class AttributeRepository : IAttributeRepository
 
         if (isValid)
         {
-            return _attributeDataProvider.UpdateAttributeWithData(updatedAttributeWithData);
+            return _attributeBuilder.UpdateAttributeWithData(updatedAttributeWithData);
         }
 
         else
