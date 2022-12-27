@@ -30,7 +30,7 @@ public class AttributeRepository : IAttributeRepository
 
     public AttributeWithData GetAttributeById(Guid guid)
     {
-        var attributeWithoutDetails = _dbContext.Attributes.FirstOrDefault(x => x.AttributeId == guid);
+        var attributeWithoutDetails = _dbContext.Attributes.SingleOrDefault(x => x.AttributeId == guid);
         if (attributeWithoutDetails != null)
         {
             return _attributeBuilder.GetAttributeWithData(attributeWithoutDetails);
@@ -133,7 +133,7 @@ public class AttributeRepository : IAttributeRepository
     {
         using (var dbContextTransaction = _dbContext.Database.BeginTransaction())
         {
-            var attributeToRemove = _dbContext.Attributes.FirstOrDefault(x => x.AttributeId == guid);
+            var attributeToRemove = _dbContext.Attributes.SingleOrDefault(x => x.AttributeId == guid);
             if (attributeToRemove == null)
             {
                 throw new ArgumentException(
@@ -145,16 +145,17 @@ public class AttributeRepository : IAttributeRepository
             {
                 case AttributeType.Price:
                     var priceAttributeDataToRemove =
-                        _dbContext.PriceAttributes.FirstOrDefault(x => x.AttributeId == guid);
+                        _dbContext.PriceAttributes.SingleOrDefault(x => x.AttributeId == guid);
                     if (priceAttributeDataToRemove != null)
                     {
                         _dbContext.PriceAttributes.Remove(priceAttributeDataToRemove);
                     }
 
                     break;
+
                 case AttributeType.Text:
                     var textAttributeDataToRemove =
-                        _dbContext.TextAttributes.FirstOrDefault(x => x.AttributeId == guid);
+                        _dbContext.TextAttributes.SingleOrDefault(x => x.AttributeId == guid);
                     if (textAttributeDataToRemove != null)
                     {
                         _dbContext.TextAttributes.Remove(textAttributeDataToRemove);
@@ -164,7 +165,7 @@ public class AttributeRepository : IAttributeRepository
 
                 case AttributeType.Selectable:
                     var selectableAttributeDataToRemove =
-                        _dbContext.SelectableAttributes.FirstOrDefault(x => x.AttributeId == guid);
+                        _dbContext.SelectableAttributes.SingleOrDefault(x => x.AttributeId == guid);
                     if (selectableAttributeDataToRemove != null)
                     {
                         _dbContext.SelectableAttributes.Remove(selectableAttributeDataToRemove);

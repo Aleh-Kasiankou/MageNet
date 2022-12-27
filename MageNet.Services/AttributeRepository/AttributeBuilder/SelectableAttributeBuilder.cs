@@ -10,7 +10,7 @@ public partial class AttributeBuilder
     private SelectableAttribute GetSelectableAttributeData(Attribute attribute)
     {
         var selectableAttributeData = _dbContext.SelectableAttributes.Include(x => x.Values)
-            .FirstOrDefault(x => x.AttributeId == attribute.AttributeId);
+            .SingleOrDefault(x => x.AttributeId == attribute.AttributeId);
 
         if (selectableAttributeData != null)
         {

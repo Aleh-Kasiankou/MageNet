@@ -9,7 +9,7 @@ public partial class AttributeBuilder
     private TextAttribute GetTextAttributeData(Attribute attribute)
     {
         var textAttributeData = _dbContext.TextAttributes
-            .FirstOrDefault(x => x.AttributeId == attribute.AttributeId);
+            .SingleOrDefault(x => x.AttributeId == attribute.AttributeId);
 
         if (textAttributeData != null)
         {

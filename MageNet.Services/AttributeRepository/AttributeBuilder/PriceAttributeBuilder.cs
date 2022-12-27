@@ -9,7 +9,7 @@ public partial class AttributeBuilder
     private PriceAttribute GetPriceAttributeData(Attribute attribute)
     {
         var priceAttributeData = _dbContext.PriceAttributes
-            .FirstOrDefault(x => x.AttributeId == attribute.AttributeId);
+            .SingleOrDefault(x => x.AttributeId == attribute.AttributeId);
 
         if (priceAttributeData != null)
         {

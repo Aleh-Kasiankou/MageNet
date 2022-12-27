@@ -13,4 +13,6 @@ public class Attribute : IAttribute
     public virtual Entity Entity { get; set; }
     public Guid EntityId { get; set; }
     
+    
+    
 }
