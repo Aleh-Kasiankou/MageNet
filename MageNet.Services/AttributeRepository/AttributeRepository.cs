@@ -50,7 +50,7 @@ public class AttributeRepository : IAttributeRepository
             DefaultLiteralValue = postAttributeWithData.DefaultLiteralValue,
             EntityId = postAttributeWithData.EntityId,
             IsMultipleSelect = postAttributeWithData.IsMultipleSelect,
-            SelectableOptions = postAttributeWithData.SelectableOptions
+            SelectableOptions = postAttributeWithData.SelectableOptions?
                 .Select(x => new SelectableAttributeValue
                 {
                     IsDefaultValue = x.IsDefaultValue,
