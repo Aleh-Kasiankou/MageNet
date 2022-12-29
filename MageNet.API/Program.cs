@@ -1,4 +1,6 @@
+using MageNet.Persistence;
 using MageNetServices.DI;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +17,15 @@ builder.Services.RegisterValidationServices();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Ubuntu"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    using(var scope = app.Services.CreateScope())
+    {
+        var mageNetContext = scope.ServiceProvider.GetRequiredService<MageNetDbContext>();
+        mageNetContext.Database.Migrate();
+    }
 }
 
 app.UseHttpsRedirection();
