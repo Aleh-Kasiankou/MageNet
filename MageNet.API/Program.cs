@@ -28,7 +28,10 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Ubuntu"))
     }
 }
 
-app.UseHttpsRedirection();
+else
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
 
