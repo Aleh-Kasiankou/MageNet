@@ -27,14 +27,14 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Ubuntu": {
+    "Docker": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:7117;http://localhost:5155",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Ubuntu"
+        "ASPNETCORE_ENVIRONMENT": "Docker"
       }
     }
   }
