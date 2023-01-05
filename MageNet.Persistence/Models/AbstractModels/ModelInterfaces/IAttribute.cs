@@ -1,8 +1,14 @@
-﻿namespace MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
+﻿using MageNet.Persistence.Models.AbstractModels.ModelEnums;
+
+namespace MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 
 public interface IAttribute
 {
     public Guid AttributeId { get; set; }
     public string AttributeName { get; set; }
-    
+
+    public Guid EntityId { get; set; }
+
+    AttributeType AttributeType { get; set; }
+
 }

@@ -1,6 +1,8 @@
-﻿namespace MageNet.Persistence.Models.Attributes;
+﻿using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 
-public class SelectableAttribute : IAttributeData
+namespace MageNet.Persistence.Models.Attributes;
+
+public class SelectableAttribute : IAttributeData, ISelectableAttributeData
 {
     public Guid SelectableAttributeId { get; set; }
     public Guid AttributeId { get; set; }

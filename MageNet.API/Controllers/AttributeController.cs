@@ -1,5 +1,5 @@
-﻿using MageNetServices.AttributeRepository;
-using MageNetServices.AttributeRepository.DTO.Attributes;
+﻿using MageNetServices.AttributeRepository.DTO.Attributes;
+using MageNetServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MageNet.Controllers;

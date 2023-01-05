@@ -1,6 +1,7 @@
 ﻿using MageNet.Persistence;
 using MageNetServices.AttributeRepository;
 using MageNetServices.AttributeValidator;
+using MageNetServices.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,6 +1,8 @@
-﻿namespace MageNet.Persistence.Models.Attributes;
+﻿using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 
-public class PriceAttribute : IAttributeData
+namespace MageNet.Persistence.Models.Attributes;
+
+public class PriceAttribute : IAttributeData, IPriceAttributeData
 {
     public Guid PriceAttributeId { get; set; }
     public Guid AttributeId { get; set; }

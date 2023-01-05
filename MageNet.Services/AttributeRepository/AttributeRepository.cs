@@ -5,6 +5,7 @@ using MageNet.Persistence.Models.Attributes;
 using MageNetServices.AttributeRepository.AttributeBuilder;
 using MageNetServices.AttributeRepository.DTO.Attributes;
 using MageNetServices.AttributeValidator;
+using MageNetServices.Interfaces;
 
 namespace MageNetServices.AttributeRepository;
 
@@ -96,36 +97,36 @@ public class AttributeRepository : IAttributeRepository
 
     private AttributeWithData FillMissingProperties(AttributeWithData updatedAttributeWithData)
     {
-        var savedAttributeWithData = GetAttributeById(updatedAttributeWithData.AttributeId);
+        var trackedAttributeWithData = GetAttributeById(updatedAttributeWithData.AttributeId);
         if (updatedAttributeWithData.AttributeType != null)
         {
-            savedAttributeWithData.AttributeType = updatedAttributeWithData.AttributeType;
+            trackedAttributeWithData.AttributeType = updatedAttributeWithData.AttributeType;
         }
 
         if (updatedAttributeWithData.AttributeName != null)
         {
-            savedAttributeWithData.AttributeName = updatedAttributeWithData.AttributeName;
+            trackedAttributeWithData.AttributeName = updatedAttributeWithData.AttributeName;
         }
 
         if (updatedAttributeWithData.SelectableOptions != null &&
-            savedAttributeWithData.AttributeType == AttributeType.Selectable)
+            trackedAttributeWithData.AttributeType == AttributeType.Selectable)
         {
-            savedAttributeWithData.SelectableOptions = updatedAttributeWithData.SelectableOptions;
+            trackedAttributeWithData.SelectableOptions = updatedAttributeWithData.SelectableOptions;
         }
 
         if (updatedAttributeWithData.DefaultLiteralValue != null &&
-            savedAttributeWithData.AttributeType != AttributeType.Selectable)
+            trackedAttributeWithData.AttributeType != AttributeType.Selectable)
         {
-            savedAttributeWithData.DefaultLiteralValue = updatedAttributeWithData.DefaultLiteralValue;
+            trackedAttributeWithData.DefaultLiteralValue = updatedAttributeWithData.DefaultLiteralValue;
         }
 
         if (updatedAttributeWithData.IsMultipleSelect != null &&
-            savedAttributeWithData.AttributeType == AttributeType.Selectable)
+            trackedAttributeWithData.AttributeType == AttributeType.Selectable)
         {
-            savedAttributeWithData.IsMultipleSelect = updatedAttributeWithData.IsMultipleSelect;
+            trackedAttributeWithData.IsMultipleSelect = updatedAttributeWithData.IsMultipleSelect;
         }
 
-        return savedAttributeWithData;
+        return trackedAttributeWithData;
     }
 
 

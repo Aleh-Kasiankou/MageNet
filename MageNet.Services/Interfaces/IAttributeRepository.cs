@@ -1,7 +1,6 @@
-﻿using MageNetServices.AttributeRepository.DTO;
-using MageNetServices.AttributeRepository.DTO.Attributes;
+﻿using MageNetServices.AttributeRepository.DTO.Attributes;
 
-namespace MageNetServices.AttributeRepository;
+namespace MageNetServices.Interfaces;
 
 public interface IAttributeRepository
 {

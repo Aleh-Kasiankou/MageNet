@@ -1,8 +1,9 @@
 ﻿using System.Text.Json.Serialization;
+using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 
 namespace MageNet.Persistence.Models.Attributes;
 
-public class SelectableAttributeValue
+public class SelectableAttributeValue : ISelectableAttributeValue
 {
     public Guid SelectableAttributeValueId { get; set; }
     

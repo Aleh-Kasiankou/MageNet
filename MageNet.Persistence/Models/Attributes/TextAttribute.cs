@@ -1,6 +1,8 @@
-﻿namespace MageNet.Persistence.Models.Attributes;
+﻿using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 
-public class TextAttribute : IAttributeData
+namespace MageNet.Persistence.Models.Attributes;
+
+public class TextAttribute : IAttributeData, ITextAttributeData
 {
     public Guid TextAttributeId { get; set; }
     public Guid AttributeId { get; set; }
