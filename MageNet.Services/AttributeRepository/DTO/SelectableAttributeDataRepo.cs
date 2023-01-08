@@ -6,16 +6,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MageNetServices.AttributeRepository.DTO;
 
-public class SelectableAttributeDataRepo : IAttributeDataRepository<SelectableAttributeData>
+public class SelectableAttributeDataRepo : AttributeDataRepo<SelectableAttributeData>
 {
     private readonly MageNetDbContext _dbContext;
 
-    public SelectableAttributeDataRepo(MageNetDbContext dbContext)
+    public SelectableAttributeDataRepo(MageNetDbContext dbContext) : base(dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public SelectableAttributeData GetAttributeData(Guid attributeId)
+    public override SelectableAttributeData GetAttributeData(Guid attributeId)
     {
         var selectableAttributeData = _dbContext.SelectableAttributes
             .Include(x => x.Values)
@@ -24,16 +24,15 @@ public class SelectableAttributeDataRepo : IAttributeDataRepository<SelectableAt
         return selectableAttributeData ?? throw new AttributeNotFoundException();
     }
 
-    public void CreateAttributeData(IAttributeData attributeData)
+
+    public override void CreateAttributeData(IAttributeData attributeData)
     {
         _dbContext.SelectableAttributes.Add(attributeData as SelectableAttributeData
                                             ?? throw new InvalidAttributeDataException(
                                                 $"Attribute Data cannot be safely casted to Selectable Attribute Data"));
-
-        _dbContext.SaveChanges();
     }
 
-    public void UpdateAttributeData(IAttributeData attributeData)
+    public override void UpdateAttributeData(IAttributeData attributeData)
     {
         throw new NotImplementedException();
     }

@@ -2,9 +2,9 @@ using MageNet.Persistence;
 using MageNet.Persistence.Exceptions;
 using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
-using MageNetServices.AttributeRepository.DTO;
 using MageNetServices.Extensions;
 using MageNetServices.Interfaces;
+using Attribute = MageNetServices.AttributeRepository.DTO.Attribute;
 
 namespace MageNetServices.AttributeRepository;
 
@@ -41,29 +41,10 @@ public class AttributeRepository : IAttributeRepository
 
     public Guid CreateNewAttribute(IPostAttributeWithData postAttributeWithData)
     {
-        var attributeWithData = new AttributeWithData
+        return new Attribute()
         {
-            AttributeId = Guid.Empty,
-            AttributeName = postAttributeWithData.AttributeName,
-            AttributeType = postAttributeWithData.AttributeType,
-            DefaultLiteralValue = postAttributeWithData.DefaultLiteralValue,
-            EntityId = postAttributeWithData.EntityId,
-            IsMultipleSelect = postAttributeWithData.IsMultipleSelect,
-            SelectableOptions = postAttributeWithData.SelectableOptions?
-                .Select(x => new SelectableAttributeValue
-                {
-                    IsDefaultValue = x.IsDefaultValue,
-                    Value = x.Value
-                })
-        };
-
-        
-        var attributeTypeBearer = _attributeTypeFactory.CreateAttributeType(attributeWithData.AttributeType);
-        var (attribute, attributeData) = attributeTypeBearer.DecoupleAttributeWithData(attributeWithData);
-        _dbContext.Attributes.Add(attribute as AttributeEntity ?? throw new InvalidOperationException());
-        _dbContext.SaveChanges();
-
-        return attribute.AttributeId;
+            AttributeType = _attributeTypeFactory.CreateAttributeType(postAttributeWithData.AttributeType)
+        }.SaveToDb(postAttributeWithData);
     }
 
     public IAttributeWithData UpdateAttribute(IAttributeWithData attributeWithData)

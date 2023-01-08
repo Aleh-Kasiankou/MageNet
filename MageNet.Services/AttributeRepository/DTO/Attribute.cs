@@ -18,5 +18,9 @@ public class Attribute : IAttribute
     {
         return AttributeType.JoinWithData(this);
     }
-    
+
+    public Guid SaveToDb(IPostAttributeWithData attributeWithData)
+    {
+        return AttributeType.SaveToDb(attributeWithData);
+    }
 }

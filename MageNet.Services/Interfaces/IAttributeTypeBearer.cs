@@ -7,7 +7,7 @@ public interface IAttributeTypeBearer
 {
     AttributeType AttributeType { get; }
     
-    void CreateData(IAttributeData attributeData);
+    Guid SaveToDb(IPostAttributeWithData postAttributeWithData);
 
     IAttributeWithData JoinWithData(IAttribute attribute);
 

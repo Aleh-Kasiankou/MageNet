@@ -2,6 +2,7 @@ using MageNet.Persistence.Exceptions;
 using MageNet.Persistence.Models.AbstractModels.ModelEnums;
 using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
+using MageNetServices.Extensions;
 using MageNetServices.Interfaces;
 
 namespace MageNetServices.AttributeRepository.DTO;
@@ -22,9 +23,18 @@ public class SelectableTypeBearer : IAttributeTypeBearer
 
     public AttributeType AttributeType { get; }
 
-    public void CreateData(IAttributeData attributeData)
+    public Guid SaveToDb(IPostAttributeWithData postAttributeWithData)
     {
+        var (attributeEntity, attributeData) =
+            DecoupleAttributeWithData(postAttributeWithData.MapToAttributeWithData());
+
+        var attributeId = _dataRepository.CreateAttribute(attributeEntity);
+        attributeData.AttributeId = attributeId;
+
         _dataRepository.CreateAttributeData(attributeData);
+        _dataRepository.SaveChanges();
+
+        return attributeId;
     }
 
     public IAttributeWithData JoinWithData(IAttribute attribute)
