@@ -1,6 +1,8 @@
-﻿namespace MageNetServices.AttributeRepository.DTO.Attributes;
+﻿using MageNetServices.Interfaces;
 
-public class PostSelectableOptions
+namespace MageNetServices.AttributeRepository.DTO.Attributes;
+
+public class PostSelectableOption: IPostSelectableOption
 {
     public string Value { get; set; } 
     public bool IsDefaultValue { get; set; }

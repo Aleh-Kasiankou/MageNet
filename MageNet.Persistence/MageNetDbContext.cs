@@ -2,20 +2,20 @@
 using MageNet.Persistence.Models.AbstractModels.ModelEnums;
 using MageNet.Persistence.Models.Attributes;
 using Microsoft.EntityFrameworkCore;
-using Attribute = MageNet.Persistence.Models.Attributes.Attribute;
 
 namespace MageNet.Persistence;
 
 public class MageNetDbContext : DbContext
 {
     public DbSet<Entity> Entities { get; set; }
-    public DbSet<Attribute> Attributes { get; set; }
-    public DbSet<PriceAttribute> PriceAttributes { get; set; }
-    public DbSet<SelectableAttribute> SelectableAttributes { get; set; }
+    public DbSet<AttributeEntity> Attributes { get; set; }
+    public DbSet<PriceAttributeData> PriceAttributes { get; set; }
+    public DbSet<SelectableAttributeData> SelectableAttributes { get; set; }
     public DbSet<SelectableAttributeValue> SelectableAttributeValues { get; set; }
-    public DbSet<TextAttribute> TextAttributes { get; set; }
+    public DbSet<TextAttributeData> TextAttributes { get; set; }
 
-    public MageNetDbContext(DbContextOptions<MageNetDbContext> options) : base(options)
+    public MageNetDbContext(DbContextOptions<MageNetDbContext> options) :
+        base(options)
     {
     }
 
@@ -54,34 +54,37 @@ public class MageNetDbContext : DbContext
         );
 
 
-        modelBuilder.Entity<Attribute>().HasKey(x => x.AttributeId);
-        modelBuilder.Entity<Attribute>().Property(x => x.AttributeType).IsRequired();
-        modelBuilder.Entity<Attribute>().Property(x => x.EntityId).IsRequired();
-        modelBuilder.Entity<Attribute>().Property(x => x.AttributeName).IsRequired();
-        modelBuilder.Entity<Attribute>().Property(x => x.AttributeName).HasColumnType("nvarchar(100)");
-        modelBuilder.Entity<Attribute>()
+        modelBuilder.Entity<AttributeEntity>().HasKey(x => x.AttributeId);
+        modelBuilder.Entity<AttributeEntity>().Property(x => x.AttributeType).IsRequired()
+            .HasColumnType("tinyint");
+
+        modelBuilder.Entity<AttributeEntity>().Property(x => x.EntityId).IsRequired();
+        modelBuilder.Entity<AttributeEntity>().Property(x => x.AttributeName).IsRequired();
+        modelBuilder.Entity<AttributeEntity>().Property(x => x.AttributeName).HasColumnType("nvarchar(100)");
+        modelBuilder.Entity<AttributeEntity>()
             .HasOne(x => x.Entity)
             .WithMany().HasForeignKey(x => x.EntityId);
 
-        modelBuilder.Entity<PriceAttribute>().HasKey(x => x.PriceAttributeId);
-        modelBuilder.Entity<PriceAttribute>().Property(x => x.DefaultValue).IsRequired();
-        modelBuilder.Entity<PriceAttribute>().Property(x => x.DefaultValue).HasColumnType("decimal")
+
+        modelBuilder.Entity<PriceAttributeData>().HasKey(x => x.PriceAttributeId);
+        modelBuilder.Entity<PriceAttributeData>().Property(x => x.DefaultValue).IsRequired();
+        modelBuilder.Entity<PriceAttributeData>().Property(x => x.DefaultValue).HasColumnType("decimal")
             .HasPrecision(16, 6);
-        modelBuilder.Entity<PriceAttribute>().HasOne(x => x.Attribute)
-            .WithOne().HasForeignKey<PriceAttribute>(x => x.AttributeId).OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<PriceAttributeData>().HasOne(x => x.Attribute)
+            .WithOne().HasForeignKey<PriceAttributeData>(x => x.AttributeId).OnDelete(DeleteBehavior.Cascade);
 
 
-        modelBuilder.Entity<TextAttribute>().HasKey(x => x.TextAttributeId);
-        modelBuilder.Entity<TextAttribute>().Property(x => x.DefaultValue).IsRequired();
-        modelBuilder.Entity<TextAttribute>().Property(x => x.DefaultValue).HasColumnType("nvarchar(255)");
-        modelBuilder.Entity<TextAttribute>().HasOne(x => x.Attribute)
-            .WithOne().HasForeignKey<TextAttribute>(x => x.AttributeId).OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<TextAttributeData>().HasKey(x => x.TextAttributeId);
+        modelBuilder.Entity<TextAttributeData>().Property(x => x.DefaultValue).IsRequired();
+        modelBuilder.Entity<TextAttributeData>().Property(x => x.DefaultValue).HasColumnType("nvarchar(255)");
+        modelBuilder.Entity<TextAttributeData>().HasOne(x => x.Attribute)
+            .WithOne().HasForeignKey<TextAttributeData>(x => x.AttributeId).OnDelete(DeleteBehavior.Cascade);
 
 
-        modelBuilder.Entity<SelectableAttribute>().HasKey(x => x.SelectableAttributeId);
-        modelBuilder.Entity<SelectableAttribute>().Property(x => x.IsMultipleSelect).IsRequired();
-        modelBuilder.Entity<SelectableAttribute>().HasOne(x => x.Attribute)
-            .WithOne().HasForeignKey<SelectableAttribute>(x => x.AttributeId).OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<SelectableAttributeData>().HasKey(x => x.SelectableAttributeId);
+        modelBuilder.Entity<SelectableAttributeData>().Property(x => x.IsMultipleSelect).IsRequired();
+        modelBuilder.Entity<SelectableAttributeData>().HasOne(x => x.Attribute)
+            .WithOne().HasForeignKey<SelectableAttributeData>(x => x.AttributeId).OnDelete(DeleteBehavior.Cascade);
 
 
         modelBuilder.Entity<SelectableAttributeValue>().HasKey(x => x.SelectableAttributeValueId);

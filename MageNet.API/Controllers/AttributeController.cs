@@ -1,4 +1,4 @@
-﻿using MageNetServices.AttributeRepository.DTO.Attributes;
+﻿using MageNetServices.AttributeRepository.DTO;
 using MageNetServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,7 +42,7 @@ public class AttributeController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult PostAttribute([FromBody] PostAttributeWithData attributeWithData)
+    public IActionResult PostAttribute([FromBody] IPostAttributeWithData attributeWithData)
     {
         try
         {

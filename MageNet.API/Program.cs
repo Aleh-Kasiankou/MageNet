@@ -19,6 +19,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.RegisterDbContext(builder.Configuration.GetConnectionString("default"));
 builder.Services.RegisterRepositoryServices();
 builder.Services.RegisterValidationServices();
+builder.Services.RegisterAttributeServices();
+builder.Services.RegisterDataTransferObjects();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "apiCompatibilityPolicy",

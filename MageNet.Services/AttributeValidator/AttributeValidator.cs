@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using MageNet.Persistence.Models.AbstractModels.ModelEnums;
-using MageNetServices.AttributeRepository.DTO.Attributes;
+using MageNetServices.AttributeRepository.DTO;
+using MageNetServices.Interfaces;
 
 namespace MageNetServices.AttributeValidator;
 
@@ -9,7 +10,7 @@ public class AttributeValidator : IAttributeValidator
 {
     private List<ValidationException> Exceptions { get; set; } = new();
 
-    public (bool, IEnumerable<ValidationException>) CheckAttributeValidity(AttributeWithData attributeWithData)
+    public (bool, IEnumerable<ValidationException>) CheckAttributeValidity(IAttributeWithData attributeWithData)
     {
         var isValid = false;
 
@@ -39,16 +40,6 @@ public class AttributeValidator : IAttributeValidator
     private IEnumerable<ValidationException> CheckRequiredFields(AttributeWithData attributeWithData)
     {
         var exceptions = new List<ValidationException>();
-
-        if (attributeWithData.AttributeType == null)
-        {
-            exceptions.Add(new ValidationException("Attribute Type cannot be null"));
-        }
-        
-        if (attributeWithData.EntityId == null)
-        {
-            exceptions.Add(new ValidationException("Entity Id cannot be null"));
-        }
 
         if (attributeWithData.AttributeName == null || string.IsNullOrWhiteSpace(attributeWithData.AttributeName))
         {

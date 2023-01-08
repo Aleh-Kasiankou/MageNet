@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MageNetServices.AttributeRepository.DTO;
-using MageNetServices.AttributeRepository.DTO.Attributes;
 
-namespace MageNetServices.AttributeValidator;
+namespace MageNetServices.Interfaces;
 
 public interface IAttributeValidator
 {
-    public (bool, IEnumerable<ValidationException>) CheckAttributeValidity(AttributeWithData attributeWithData);
+    public (bool, IEnumerable<ValidationException>) CheckAttributeValidity(IAttributeWithData attributeWithData);
 }

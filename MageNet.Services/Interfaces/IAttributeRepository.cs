@@ -1,16 +1,14 @@
-﻿using MageNetServices.AttributeRepository.DTO.Attributes;
-
-namespace MageNetServices.Interfaces;
+﻿namespace MageNetServices.Interfaces;
 
 public interface IAttributeRepository
 {
-     IEnumerable<AttributeWithData> GetAttributes();
+     IEnumerable<IAttributeWithData> GetAttributes();
 
-     AttributeWithData GetAttributeById(Guid guid);
+     IAttributeWithData GetAttributeById(Guid guid);
 
-     Guid CreateNewAttribute(PostAttributeWithData attributeWithData);
+     Guid CreateNewAttribute(IPostAttributeWithData attributeWithData);
 
-     AttributeWithData UpdateAttribute(AttributeWithData attributeWithData);
+     IAttributeWithData UpdateAttribute(IAttributeWithData attributeWithData);
 
      void DeleteAttributeById(Guid guid);
 }
