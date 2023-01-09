@@ -4,7 +4,7 @@ using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
 using MageNetServices.Extensions;
 using MageNetServices.Interfaces;
-using Attribute = MageNetServices.AttributeRepository.DTO.Attribute;
+using Attribute = MageNetServices.AttributeRepository.DTO.Attributes.Attribute;
 
 namespace MageNetServices.AttributeRepository;
 
@@ -12,12 +12,14 @@ public class AttributeRepository : IAttributeRepository
 {
     private readonly MageNetDbContext _dbContext;
     private readonly IAttributeTypeFactory _attributeTypeFactory;
+    private readonly IAttributeValidator _attributeValidator;
 
 
-    public AttributeRepository(MageNetDbContext dbContext, IAttributeTypeFactory attributeTypeFactory)
+    public AttributeRepository(MageNetDbContext dbContext, IAttributeTypeFactory attributeTypeFactory, IAttributeValidator attributeValidator)
     {
         _dbContext = dbContext;
         _attributeTypeFactory = attributeTypeFactory;
+        _attributeValidator = attributeValidator;
     }
 
     public IEnumerable<IAttributeWithData> GetAttributes()
@@ -41,7 +43,7 @@ public class AttributeRepository : IAttributeRepository
 
     public Guid CreateNewAttribute(IPostAttributeWithData postAttributeWithData)
     {
-        return new Attribute()
+        return new Attribute(_attributeValidator)
         {
             AttributeType = _attributeTypeFactory.CreateAttributeType(postAttributeWithData.AttributeType)
         }.SaveToDb(postAttributeWithData);

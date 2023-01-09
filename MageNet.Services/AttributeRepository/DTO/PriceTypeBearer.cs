@@ -2,7 +2,7 @@ using MageNet.Persistence.Exceptions;
 using MageNet.Persistence.Models.AbstractModels.ModelEnums;
 using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
-using MageNetServices.Extensions;
+using MageNetServices.AttributeRepository.DTO.Attributes;
 using MageNetServices.Interfaces;
 
 namespace MageNetServices.AttributeRepository.DTO;
@@ -23,10 +23,10 @@ public class PriceTypeBearer : IAttributeTypeBearer
 
     public AttributeType AttributeType { get; }
 
-    public Guid SaveToDb(IPostAttributeWithData postAttributeWithData)
+    public Guid SaveToDb(IAttributeWithData attributeWithData)
     {
         var (attributeEntity, attributeData) =
-            DecoupleAttributeWithData(postAttributeWithData.MapToAttributeWithData());
+            DecoupleAttributeWithData(attributeWithData);
 
         var attributeId = _dataRepository.CreateAttribute(attributeEntity);
         attributeData.AttributeId = attributeId;

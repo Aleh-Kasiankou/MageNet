@@ -9,7 +9,7 @@ public class PostAttributeWithData : IPostAttributeWithData
     public string AttributeName { get; set; }
     public AttributeType AttributeType { get; set; }
     public string? DefaultLiteralValue { get; set; }
-    public IEnumerable<IPostSelectableOption>? SelectableOptions { get; set; }
+    public IEnumerable<PostSelectableOption>? SelectableOptions { get; set; }
 
     public bool? IsMultipleSelect { get; set; }
 }

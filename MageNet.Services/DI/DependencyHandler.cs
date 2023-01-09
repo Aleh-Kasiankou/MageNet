@@ -1,5 +1,4 @@
 ﻿using MageNet.Persistence;
-using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
 using MageNetServices.AttributeRepository.DTO;
 using MageNetServices.AttributeRepository.DTO.Attributes;

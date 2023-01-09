@@ -1,5 +1,4 @@
-﻿using MageNetServices.AttributeRepository.DTO;
-using MageNetServices.AttributeRepository.DTO.Attributes;
+﻿using MageNetServices.AttributeRepository.DTO.Attributes;
 using MageNetServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,7 +49,7 @@ public class AttributeController : ControllerBase
             return Ok(_attributeRepository.CreateNewAttribute(attributeWithData));
         }
 
-        catch (Exception e)
+        catch (ApplicationException e)
         {
             return BadRequest(e.Message);
         }
@@ -64,7 +63,7 @@ public class AttributeController : ControllerBase
         {
             return Ok(_attributeRepository.UpdateAttribute(updatedAttributeWithData));
         }
-        catch (Exception e)
+        catch (ApplicationException e)
         {
             return BadRequest(e.Message);
         }

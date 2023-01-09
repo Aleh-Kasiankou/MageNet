@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using MageNet.Persistence.Models.AbstractModels.ModelEnums;
-using MageNetServices.AttributeRepository.DTO;
+using MageNetServices.AttributeRepository.DTO.Attributes;
 using MageNetServices.Interfaces;
 
 namespace MageNetServices.AttributeValidator;
@@ -103,6 +103,21 @@ public class AttributeValidator : IAttributeValidator
             }
         }
 
+
+        return exceptions;
+    }
+
+    private IEnumerable<ValidationException> CheckPriceAttributeDefaultValue(IAttributeWithData attributeWithData)
+    {
+        var exceptions = new List<ValidationException>();
+
+        if (attributeWithData.AttributeType == AttributeType.Price)
+        {
+            if (!decimal.TryParse(attributeWithData.DefaultLiteralValue, out _))
+            {
+                exceptions.Add(new ValidationException("Default value for the price attribute must be numeric"));
+            }
+        }
 
         return exceptions;
     }
