@@ -1,6 +1,7 @@
 using MageNet.Persistence.Exceptions;
 using MageNet.Persistence.Models.AbstractModels.ModelEnums;
 using MageNet.Persistence.Models.Attributes;
+using MageNetServices.AttributeRepository.DTO.TypeBearers;
 using MageNetServices.Interfaces;
 
 namespace MageNetServices.AttributeRepository.DTO;
@@ -44,16 +45,16 @@ public class AttributeTypeFactory : IAttributeTypeFactory
 
     private IAttributeTypeBearer CreatePriceAttributeBearer()
     {
-        return new PriceTypeBearer(_priceDataRepository, this);
+        return new PriceTypeBearer(_priceDataRepository);
     }
 
     private IAttributeTypeBearer CreateTextAttributeBearer()
     {
-        return new TextTypeBearer(_textDataRepository, this);
+        return new TextTypeBearer(_textDataRepository);
     }
 
     private IAttributeTypeBearer CreateSelectableAttributeBearer()
     {
-        return new SelectableTypeBearer(_selectableDataRepository, this);
+        return new SelectableTypeBearer(_selectableDataRepository);
     }
 }

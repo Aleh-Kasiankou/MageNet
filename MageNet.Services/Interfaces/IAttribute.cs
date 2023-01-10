@@ -9,6 +9,8 @@ public interface IAttribute
 
     IAttributeTypeBearer AttributeType { get; set; }
     IAttributeWithData JoinWithSavedData();
-    Guid SaveToDb(IPostAttributeWithData postAttributeWithData);
+    Guid CreateNewDbEntry(IPostAttributeWithData postAttributeWithData);
+
+    void Update(IPutAttributeWithData putAttributeWithData);
 
 }

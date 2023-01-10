@@ -4,6 +4,7 @@ using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
 using MageNetServices.Extensions;
 using MageNetServices.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Attribute = MageNetServices.AttributeRepository.DTO.Attributes.Attribute;
 
 namespace MageNetServices.AttributeRepository;
@@ -15,7 +16,8 @@ public class AttributeRepository : IAttributeRepository
     private readonly IAttributeValidator _attributeValidator;
 
 
-    public AttributeRepository(MageNetDbContext dbContext, IAttributeTypeFactory attributeTypeFactory, IAttributeValidator attributeValidator)
+    public AttributeRepository(MageNetDbContext dbContext, IAttributeTypeFactory attributeTypeFactory,
+        IAttributeValidator attributeValidator)
     {
         _dbContext = dbContext;
         _attributeTypeFactory = attributeTypeFactory;
@@ -24,9 +26,8 @@ public class AttributeRepository : IAttributeRepository
 
     public IEnumerable<IAttributeWithData> GetAttributes()
     {
-        
-        var attributes = _dbContext.Attributes.ToArray().Select(attr => 
-            attr.MapToIAttribute(_attributeTypeFactory));
+        var attributes = _dbContext.Attributes.ToArray().Select(attr =>
+            attr.MapToIAttributeWithNoValidation(_attributeTypeFactory));
 
         // map to IAttribute
 
@@ -37,23 +38,29 @@ public class AttributeRepository : IAttributeRepository
 
     public IAttributeWithData GetAttributeById(Guid guid)
     {
-        var attribute = _getAttributeById(guid).MapToIAttribute(_attributeTypeFactory);
+        var attribute = _getAttributeById(guid).MapToIAttributeWithNoValidation(_attributeTypeFactory);
         return attribute.JoinWithSavedData();
     }
 
     public Guid CreateNewAttribute(IPostAttributeWithData postAttributeWithData)
     {
-        return new Attribute(_attributeValidator)
+        return new Attribute(_attributeValidator, _attributeTypeFactory)
         {
             AttributeType = _attributeTypeFactory.CreateAttributeType(postAttributeWithData.AttributeType)
-        }.SaveToDb(postAttributeWithData);
+        }.CreateNewDbEntry(postAttributeWithData);
     }
 
-    public IAttributeWithData UpdateAttribute(IAttributeWithData attributeWithData)
+    public void UpdateAttribute(IPutAttributeWithData attributeWithData)
     {
-        var attributeTypeBearer = _attributeTypeFactory.CreateAttributeType(attributeWithData.AttributeType);
-        attributeTypeBearer.UpdateAttributeData(attributeWithData);
-        return GetAttributeById(attributeWithData.AttributeId);
+        var savedAttribute = _getAttributeById(attributeWithData.AttributeId)
+            .MapToIAttributeWithValidation(_attributeTypeFactory, _attributeValidator);
+        // begin transaction
+
+        // edit attribute itself if needed
+        savedAttribute.Update(attributeWithData);
+        // edit data
+
+        // end transaction
     }
 
     public void DeleteAttributeById(Guid guid)
@@ -65,7 +72,7 @@ public class AttributeRepository : IAttributeRepository
 
     private IAttributeEntity _getAttributeById(Guid guid)
     {
-        var attribute = _dbContext.Attributes
+        var attribute = _dbContext.Attributes.AsNoTracking()
             .SingleOrDefault(attr => attr.AttributeId == guid);
 
         if (attribute == null)

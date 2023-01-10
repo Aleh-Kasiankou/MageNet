@@ -7,10 +7,11 @@ public interface IAttributeTypeBearer
 {
     AttributeType AttributeType { get; }
     
-    Guid SaveToDb(IAttributeWithData postAttributeWithData);
+    Guid CreateNewDbEntry(IAttributeWithData postAttributeWithData);
 
     IAttributeWithData JoinWithData(IAttribute attribute);
-
-    void UpdateAttributeData(IAttributeWithData attributeData);
+    void UpdateAttributeData(IAttributeWithData attributeData, bool typeIsChanged);
     (IAttributeEntity, IAttributeData) DecoupleAttributeWithData(IAttributeWithData attributeWithData);
+
+    IAttributeWithData RemoveIrrelevantProperties(IAttributeWithData attributeWithData);
 }

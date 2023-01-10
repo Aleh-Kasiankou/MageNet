@@ -8,7 +8,7 @@ public interface IAttributeRepository
 
      Guid CreateNewAttribute(IPostAttributeWithData attributeWithData);
 
-     IAttributeWithData UpdateAttribute(IAttributeWithData attributeWithData);
+     void UpdateAttribute(IPutAttributeWithData attributeWithData);
 
      void DeleteAttributeById(Guid guid);
 }

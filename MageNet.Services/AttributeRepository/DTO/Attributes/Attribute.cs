@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using MageNet.Persistence.Models;
+using MageNet.Persistence.Models.AbstractModels.ModelEnums;
 using MageNetServices.Exceptions;
 using MageNetServices.Extensions;
 using MageNetServices.Interfaces;
@@ -8,17 +9,20 @@ namespace MageNetServices.AttributeRepository.DTO.Attributes;
 
 public class Attribute : IAttribute
 {
+    private readonly IAttributeTypeFactory _attributeTypeFactory;
     private readonly IAttributeValidator _attributeValidator;
 
-    private Attribute()
+    private Attribute(IAttributeTypeFactory attributeTypeFactory)
     {
+        _attributeTypeFactory = attributeTypeFactory;
         // empty constructor for conversion from attribute entity saved in the database
         // attribute is assumed to be valid so validator is not required
     }
-    
-    public Attribute(IAttributeValidator attributeValidator)
+
+    public Attribute(IAttributeValidator attributeValidator, IAttributeTypeFactory attributeTypeFactory)
     {
         _attributeValidator = attributeValidator;
+        _attributeTypeFactory = attributeTypeFactory;
     }
 
     public Guid AttributeId { get; set; }
@@ -33,15 +37,14 @@ public class Attribute : IAttribute
         return AttributeType.JoinWithData(this);
     }
 
-    public Guid SaveToDb(IPostAttributeWithData postAttributeWithData)
+    public Guid CreateNewDbEntry(IPostAttributeWithData postAttributeWithData)
     {
         var attributeWithData = postAttributeWithData.MapToAttributeWithData();
         var validationResult = _attributeValidator.CheckAttributeValidity(attributeWithData);
 
         if (validationResult.Item1)
         {
-            return AttributeType.SaveToDb(attributeWithData);
-
+            return AttributeType.CreateNewDbEntry(attributeWithData);
         }
 
         var validationErrorMsg = string.Join(",", validationResult.Item2.Select(e => e.Message));
@@ -49,9 +52,68 @@ public class Attribute : IAttribute
         throw new AggregateAttributeValidationException(validationErrorMsg);
     }
 
-    public static Attribute CreateAttributeWithoutValidation(Guid attributeId, IAttributeTypeBearer attributeType, string attributeName, Guid entityId)
+    public void Update(IPutAttributeWithData putAttributeWithData)
     {
-        return new Attribute
+        var savedAttributeWithData = JoinWithSavedData();
+
+        if (putAttributeWithData.AttributeType != null &&
+            putAttributeWithData.AttributeType != AttributeType.AttributeType)
+        {
+            UpdateAttributeDataWithTypeChange(savedAttributeWithData, putAttributeWithData);
+        }
+
+        else
+        {
+            UpdateAttributeData(savedAttributeWithData, putAttributeWithData);
+        }
+    }
+
+    private void UpdateAttributeDataWithTypeChange(IAttributeWithData savedAttributeWithData,
+        IPutAttributeWithData putAttributeWithData)
+    {
+        if (putAttributeWithData.AttributeType != null)
+        {
+            savedAttributeWithData.AttributeType = (AttributeType)putAttributeWithData.AttributeType;
+            AttributeType = _attributeTypeFactory.CreateAttributeType(savedAttributeWithData.AttributeType);
+            // need change attribute type property
+            
+            
+            var updatedAttribute = AttributeType.RemoveIrrelevantProperties(savedAttributeWithData);
+            UpdateAttributeData(updatedAttribute, putAttributeWithData, true);
+            return;
+        }
+
+        throw new InvalidOperationException("Attribute Type cannot be changed because new attribute type is null");
+    }
+
+    private void UpdateAttributeData(IAttributeWithData savedAttributeWithData,
+        IPutAttributeWithData putAttributeWithData, bool typeIsChanged = false)
+    {
+        var updatedAttribute = putAttributeWithData.MapToAttributeWithData(savedAttributeWithData);
+        // map
+
+        var validationResult = _attributeValidator.CheckAttributeValidity(updatedAttribute);
+
+        // validate
+
+        if (validationResult.Item1)
+        {
+            AttributeType.UpdateAttributeData(updatedAttribute, typeIsChanged);
+
+            // save
+            
+            return;
+        }
+
+        var validationErrorMsg = string.Join(",", validationResult.Item2.Select(e => e.Message));
+
+        throw new AggregateAttributeValidationException(validationErrorMsg);
+    }
+
+    public static Attribute CreateAttributeWithoutValidation(Guid attributeId, IAttributeTypeBearer attributeType,
+        string attributeName, Guid entityId, IAttributeTypeFactory attributeTypeFactory)
+    {
+        return new Attribute(attributeTypeFactory)
         {
             AttributeId = attributeId,
             AttributeName = attributeName,

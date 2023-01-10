@@ -1,35 +1,33 @@
-using MageNet.Persistence.Exceptions;
 using MageNet.Persistence.Models.AbstractModels.ModelEnums;
 using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
 using MageNetServices.AttributeRepository.DTO.Attributes;
 using MageNetServices.Interfaces;
 
-namespace MageNetServices.AttributeRepository.DTO;
+namespace MageNetServices.AttributeRepository.DTO.TypeBearers;
 
-public class PriceTypeBearer : IAttributeTypeBearer
+public class TextTypeBearer : IAttributeTypeBearer
 {
-    private readonly IAttributeDataRepository<PriceAttributeData> _dataRepository;
-    private readonly IAttributeTypeFactory _attributeTypeFactory;
+    private readonly IAttributeDataRepository<TextAttributeData> _dataRepository;
 
 
-    public PriceTypeBearer(IAttributeDataRepository<PriceAttributeData> dataRepository,
-        IAttributeTypeFactory attributeTypeFactory)
+    public TextTypeBearer(IAttributeDataRepository<TextAttributeData> dataRepository)
     {
         _dataRepository = dataRepository;
-        _attributeTypeFactory = attributeTypeFactory;
-        AttributeType = AttributeType.Price;
+        AttributeType = AttributeType.Text;
     }
 
     public AttributeType AttributeType { get; }
 
-    public Guid SaveToDb(IAttributeWithData attributeWithData)
+    public Guid CreateNewDbEntry(IAttributeWithData attributeWithData)
     {
         var (attributeEntity, attributeData) =
             DecoupleAttributeWithData(attributeWithData);
 
         var attributeId = _dataRepository.CreateAttribute(attributeEntity);
         attributeData.AttributeId = attributeId;
+
+
         _dataRepository.CreateAttributeData(attributeData);
         _dataRepository.SaveChanges();
 
@@ -46,20 +44,33 @@ public class PriceTypeBearer : IAttributeTypeBearer
             EntityId = attribute.EntityId,
             AttributeName = attribute.AttributeName,
             AttributeType = attribute.AttributeType.AttributeType,
-            DefaultLiteralValue = attributeData.DefaultValue.ToString(),
+            DefaultLiteralValue = attributeData.DefaultValue,
             SelectableOptions = null,
             IsMultipleSelect = null
         };
     }
 
-    public void UpdateAttributeData(IAttributeWithData attributeData)
+    public void UpdateAttributeData(IAttributeWithData attributeWithData, bool typeIsChanged)
     {
-        throw new NotImplementedException();
+        var (attributeEntity, attributeData) = DecoupleAttributeWithData(attributeWithData);
+        _dataRepository.UpdateAttribute(attributeEntity);
+
+        if (typeIsChanged)
+        {
+            _dataRepository.CreateAttributeData(attributeData);
+        }
+
+        else
+        {
+            _dataRepository.UpdateAttributeData(attributeData);
+        }
+
+        _dataRepository.SaveChanges();
     }
 
     public (IAttributeEntity, IAttributeData) DecoupleAttributeWithData(IAttributeWithData attributeWithData)
     {
-        var attribute = new AttributeEntity
+        var attribute = new AttributeEntity()
         {
             AttributeId = attributeWithData.AttributeId,
             AttributeName = attributeWithData.AttributeName,
@@ -67,14 +78,19 @@ public class PriceTypeBearer : IAttributeTypeBearer
             EntityId = attributeWithData.EntityId,
         };
 
-        var attributeData = new PriceAttributeData
+        var attributeData = new TextAttributeData
         {
             AttributeId = attributeWithData.AttributeId,
-            DefaultValue = decimal.Parse(s: attributeWithData.DefaultLiteralValue
-                                            ?? throw new DefaultLiteralValueNotProvidedException(
-                                                "Price attribute must have a decimal value"))
+            DefaultValue = attributeWithData.DefaultLiteralValue ?? ""
         };
 
         return (attribute, attributeData);
+    }
+
+    public IAttributeWithData RemoveIrrelevantProperties(IAttributeWithData attributeWithData)
+    {
+        attributeWithData.SelectableOptions = null;
+        attributeWithData.IsMultipleSelect = null;
+        return attributeWithData;
     }
 }

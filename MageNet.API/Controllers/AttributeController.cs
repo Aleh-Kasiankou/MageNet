@@ -57,11 +57,12 @@ public class AttributeController : ControllerBase
 
 
     [HttpPut]
-    public IActionResult PutProductAttribute([FromBody] AttributeWithData updatedAttributeWithData)
+    public IActionResult PutProductAttribute([FromBody] PutAttributeWithData putAttributeWithData)
     {
         try
         {
-            return Ok(_attributeRepository.UpdateAttribute(updatedAttributeWithData));
+            _attributeRepository.UpdateAttribute(putAttributeWithData);
+            return Ok();
         }
         catch (ApplicationException e)
         {

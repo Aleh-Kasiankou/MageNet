@@ -4,7 +4,7 @@ using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
 using Microsoft.EntityFrameworkCore;
 
-namespace MageNetServices.AttributeRepository.DTO;
+namespace MageNetServices.AttributeRepository.DTO.TypedDataRepositories;
 
 public class SelectableAttributeDataRepo : AttributeDataRepo<SelectableAttributeData>
 {
@@ -34,6 +34,8 @@ public class SelectableAttributeDataRepo : AttributeDataRepo<SelectableAttribute
 
     public override void UpdateAttributeData(IAttributeData attributeData)
     {
-        throw new NotImplementedException();
+        _dbContext.SelectableAttributes.Update(attributeData as SelectableAttributeData ??
+                                          throw new InvalidOperationException(
+                                              $"Attribute Data cannot be safely casted to Selectable Attribute Data"));
     }
 }

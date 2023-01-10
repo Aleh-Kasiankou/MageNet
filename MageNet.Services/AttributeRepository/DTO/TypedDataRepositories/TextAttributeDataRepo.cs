@@ -3,7 +3,7 @@ using MageNet.Persistence.Exceptions;
 using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
 
-namespace MageNetServices.AttributeRepository.DTO;
+namespace MageNetServices.AttributeRepository.DTO.TypedDataRepositories;
 
 public class TextAttributeDataRepo : AttributeDataRepo<TextAttributeData>
 {
@@ -31,6 +31,8 @@ public class TextAttributeDataRepo : AttributeDataRepo<TextAttributeData>
 
     public override void UpdateAttributeData(IAttributeData attributeData)
     {
-        throw new NotImplementedException();
+        _dbContext.TextAttributes.Update(attributeData as TextAttributeData ??
+                                          throw new InvalidOperationException(
+                                              $"Attribute Data cannot be safely casted to Text Attribute Data"));
     }
 }

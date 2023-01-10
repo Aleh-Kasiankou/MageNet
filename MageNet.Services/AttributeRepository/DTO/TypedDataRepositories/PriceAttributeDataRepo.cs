@@ -3,7 +3,7 @@ using MageNet.Persistence.Exceptions;
 using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
 
-namespace MageNetServices.AttributeRepository.DTO;
+namespace MageNetServices.AttributeRepository.DTO.TypedDataRepositories;
 
 public class PriceAttributeDataRepo : AttributeDataRepo<PriceAttributeData>
 {
@@ -19,7 +19,7 @@ public class PriceAttributeDataRepo : AttributeDataRepo<PriceAttributeData>
         var priceAttributeData = _dbContext.PriceAttributes.SingleOrDefault(x => x.AttributeId == attributeId);
         return priceAttributeData ?? throw new AttributeNotFoundException();
     }
-    
+
     public override void CreateAttributeData(IAttributeData attributeData)
     {
         _dbContext.PriceAttributes.Add(attributeData as PriceAttributeData
@@ -29,10 +29,8 @@ public class PriceAttributeDataRepo : AttributeDataRepo<PriceAttributeData>
 
     public override void UpdateAttributeData(IAttributeData attributeData)
     {
-        // if attribute type didn't change, it is enough to map changed props. 
-        throw new NotImplementedException();
-
-        // if attribute type changed, it is necessary to remove the existing data,
-        // update attribute type, and use new DataRepo To Create Data.
+        _dbContext.PriceAttributes.Update(attributeData as PriceAttributeData ??
+                                          throw new InvalidOperationException(
+                                              $"Attribute Data cannot be safely casted to Price Attribute Data"));
     }
 }

@@ -21,4 +21,8 @@
         </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\MageNet.API\MageNet.API.csproj" />
+    </ItemGroup>
+
 </Project>
