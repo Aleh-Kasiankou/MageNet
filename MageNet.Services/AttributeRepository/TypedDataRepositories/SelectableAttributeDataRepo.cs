@@ -17,8 +17,8 @@ public class SelectableAttributeDataRepo : AttributeDataRepo<SelectableAttribute
 
     public override SelectableAttributeData GetAttributeData(Guid attributeId)
     {
-        var selectableAttributeData = _dbContext.SelectableAttributes
-            .Include(x => x.Values)
+        var selectableAttributeData = _dbContext.SelectableAttributes.AsNoTracking()
+            .Include(x => x.Values).AsNoTracking()
             .SingleOrDefault(x => x.AttributeId == attributeId);
 
         return selectableAttributeData ?? throw new AttributeNotFoundException();
@@ -35,8 +35,8 @@ public class SelectableAttributeDataRepo : AttributeDataRepo<SelectableAttribute
     public override void UpdateAttributeData(IAttributeData attributeData)
     {
         _dbContext.SelectableAttributes.Update(attributeData as SelectableAttributeData ??
-                                          throw new InvalidOperationException(
-                                              $"Attribute Data cannot be safely casted to Selectable Attribute Data"));
+                                               throw new InvalidOperationException(
+                                                   $"Attribute Data cannot be safely casted to Selectable Attribute Data"));
     }
 
     public override void DeleteAttributeData(Guid attributeId)

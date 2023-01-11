@@ -62,6 +62,12 @@ public class SelectableTypeBearer : IAttributeTypeBearer
 
         else
         {
+            var selectableDataId = _dataRepository
+                .GetAttributeData(attributeEntity.AttributeId)
+                .SelectableAttributeId;
+
+            // direct cast is ok because attributeWithData passed validation after data-mapping
+            ((SelectableAttributeData) attributeData).SelectableAttributeId = selectableDataId;
             _dataRepository.UpdateAttributeData(attributeData);
         }
 
