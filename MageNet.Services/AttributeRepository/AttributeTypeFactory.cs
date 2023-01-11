@@ -1,10 +1,10 @@
 using MageNet.Persistence.Exceptions;
 using MageNet.Persistence.Models.AbstractModels.ModelEnums;
 using MageNet.Persistence.Models.Attributes;
-using MageNetServices.AttributeRepository.DTO.TypeBearers;
+using MageNetServices.AttributeRepository.TypeBearers;
 using MageNetServices.Interfaces;
 
-namespace MageNetServices.AttributeRepository.DTO;
+namespace MageNetServices.AttributeRepository;
 
 public class AttributeTypeFactory : IAttributeTypeFactory
 {

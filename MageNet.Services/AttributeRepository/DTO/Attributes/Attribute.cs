@@ -42,12 +42,12 @@ public class Attribute : IAttribute
         var attributeWithData = postAttributeWithData.MapToAttributeWithData();
         var validationResult = _attributeValidator.CheckAttributeValidity(attributeWithData);
 
-        if (validationResult.Item1)
+        if (validationResult.isValid)
         {
             return AttributeType.CreateNewDbEntry(attributeWithData);
         }
 
-        var validationErrorMsg = string.Join(",", validationResult.Item2.Select(e => e.Message));
+        var validationErrorMsg = string.Join(",", validationResult.validationErrors.Select(e => e.Message));
 
         throw new AggregateAttributeValidationException(validationErrorMsg);
     }
@@ -73,11 +73,12 @@ public class Attribute : IAttribute
     {
         if (putAttributeWithData.AttributeType != null)
         {
+            AttributeType.RemoveDbData(AttributeId);
             savedAttributeWithData.AttributeType = (AttributeType)putAttributeWithData.AttributeType;
             AttributeType = _attributeTypeFactory.CreateAttributeType(savedAttributeWithData.AttributeType);
             // need change attribute type property
-            
-            
+
+
             var updatedAttribute = AttributeType.RemoveIrrelevantProperties(savedAttributeWithData);
             UpdateAttributeData(updatedAttribute, putAttributeWithData, true);
             return;
@@ -90,22 +91,19 @@ public class Attribute : IAttribute
         IPutAttributeWithData putAttributeWithData, bool typeIsChanged = false)
     {
         var updatedAttribute = putAttributeWithData.MapToAttributeWithData(savedAttributeWithData);
-        // map
-
+        
         var validationResult = _attributeValidator.CheckAttributeValidity(updatedAttribute);
 
-        // validate
-
-        if (validationResult.Item1)
+       if (validationResult.isValid)
+           
+           
         {
             AttributeType.UpdateAttributeData(updatedAttribute, typeIsChanged);
 
-            // save
-            
-            return;
+           return;
         }
 
-        var validationErrorMsg = string.Join(",", validationResult.Item2.Select(e => e.Message));
+        var validationErrorMsg = string.Join(",", validationResult.validationErrors.Select(e => e.Message));
 
         throw new AggregateAttributeValidationException(validationErrorMsg);
     }

@@ -1,8 +1,9 @@
 ﻿using MageNet.Persistence;
 using MageNet.Persistence.Models.Attributes;
+using MageNetServices.AttributeRepository;
 using MageNetServices.AttributeRepository.DTO;
 using MageNetServices.AttributeRepository.DTO.Attributes;
-using MageNetServices.AttributeRepository.DTO.TypedDataRepositories;
+using MageNetServices.AttributeRepository.TypedDataRepositories;
 using MageNetServices.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

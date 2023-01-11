@@ -67,8 +67,8 @@ public static class AttributeMapper
 
         if (putAttributeWithData.SelectableOptions != null)
         {
-            // TODO Add new options if needed
-            
+            // TODO Add new options if needed 
+
             // find saved options
             var savedOptions = savedAttributeWithData.SelectableOptions;
 

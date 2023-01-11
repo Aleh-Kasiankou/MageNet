@@ -13,5 +13,6 @@ public interface IAttributeTypeBearer
     void UpdateAttributeData(IAttributeWithData attributeData, bool typeIsChanged);
     (IAttributeEntity, IAttributeData) DecoupleAttributeWithData(IAttributeWithData attributeWithData);
 
+    void RemoveDbData(Guid attributeId);
     IAttributeWithData RemoveIrrelevantProperties(IAttributeWithData attributeWithData);
 }

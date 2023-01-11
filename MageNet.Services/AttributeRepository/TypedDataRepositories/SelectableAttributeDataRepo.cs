@@ -4,7 +4,7 @@ using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
 using Microsoft.EntityFrameworkCore;
 
-namespace MageNetServices.AttributeRepository.DTO.TypedDataRepositories;
+namespace MageNetServices.AttributeRepository.TypedDataRepositories;
 
 public class SelectableAttributeDataRepo : AttributeDataRepo<SelectableAttributeData>
 {
@@ -37,5 +37,12 @@ public class SelectableAttributeDataRepo : AttributeDataRepo<SelectableAttribute
         _dbContext.SelectableAttributes.Update(attributeData as SelectableAttributeData ??
                                           throw new InvalidOperationException(
                                               $"Attribute Data cannot be safely casted to Selectable Attribute Data"));
+    }
+
+    public override void DeleteAttributeData(Guid attributeId)
+    {
+        _dbContext.SelectableAttributes
+            .Remove(_dbContext.SelectableAttributes
+                .Single(x => x.AttributeId == attributeId));
     }
 }

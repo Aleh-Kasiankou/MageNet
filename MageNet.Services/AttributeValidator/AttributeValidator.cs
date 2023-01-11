@@ -10,7 +10,7 @@ public class AttributeValidator : IAttributeValidator
 {
     private List<ValidationException> Exceptions { get; set; } = new();
 
-    public (bool, IEnumerable<ValidationException>) CheckAttributeValidity(IAttributeWithData attributeWithData)
+    public (bool isValid, IEnumerable<ValidationException> validationErrors) CheckAttributeValidity(IAttributeWithData attributeWithData)
     {
         var isValid = false;
 

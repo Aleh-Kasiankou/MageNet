@@ -4,7 +4,7 @@ using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
 using MageNetServices.Interfaces;
 
-namespace MageNetServices.AttributeRepository.DTO.TypedDataRepositories;
+namespace MageNetServices.AttributeRepository.TypedDataRepositories;
 
 public abstract class AttributeDataRepo<T> : IAttributeDataRepository<T> where T : IAttributeData
 {
@@ -36,6 +36,7 @@ public abstract class AttributeDataRepo<T> : IAttributeDataRepository<T> where T
     public abstract void CreateAttributeData(IAttributeData attributeData);
 
     public abstract void UpdateAttributeData(IAttributeData attributeData);
+    public abstract void DeleteAttributeData(Guid attributeId);
 
     public virtual void SaveChanges()
     {

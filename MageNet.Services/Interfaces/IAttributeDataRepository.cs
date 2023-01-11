@@ -13,5 +13,7 @@ public interface IAttributeDataRepository<T> where T : IAttributeData
 
     void UpdateAttributeData(IAttributeData attributeData);
 
+    void DeleteAttributeData(Guid attributeId);
+
     void SaveChanges();
 }

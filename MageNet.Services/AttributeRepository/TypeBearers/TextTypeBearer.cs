@@ -4,7 +4,7 @@ using MageNet.Persistence.Models.Attributes;
 using MageNetServices.AttributeRepository.DTO.Attributes;
 using MageNetServices.Interfaces;
 
-namespace MageNetServices.AttributeRepository.DTO.TypeBearers;
+namespace MageNetServices.AttributeRepository.TypeBearers;
 
 public class TextTypeBearer : IAttributeTypeBearer
 {
@@ -85,6 +85,11 @@ public class TextTypeBearer : IAttributeTypeBearer
         };
 
         return (attribute, attributeData);
+    }
+
+    public void RemoveDbData(Guid attributeId)
+    {
+        _dataRepository.DeleteAttributeData(attributeId);
     }
 
     public IAttributeWithData RemoveIrrelevantProperties(IAttributeWithData attributeWithData)

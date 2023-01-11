@@ -3,7 +3,7 @@ using MageNet.Persistence.Exceptions;
 using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
 
-namespace MageNetServices.AttributeRepository.DTO.TypedDataRepositories;
+namespace MageNetServices.AttributeRepository.TypedDataRepositories;
 
 public class PriceAttributeDataRepo : AttributeDataRepo<PriceAttributeData>
 {
@@ -32,5 +32,12 @@ public class PriceAttributeDataRepo : AttributeDataRepo<PriceAttributeData>
         _dbContext.PriceAttributes.Update(attributeData as PriceAttributeData ??
                                           throw new InvalidOperationException(
                                               $"Attribute Data cannot be safely casted to Price Attribute Data"));
+    }
+
+    public override void DeleteAttributeData(Guid attributeId)
+    {
+        _dbContext.PriceAttributes
+            .Remove(_dbContext.PriceAttributes
+                .Single(x => x.AttributeId == attributeId));
     }
 }

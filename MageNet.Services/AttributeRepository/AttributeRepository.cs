@@ -54,13 +54,8 @@ public class AttributeRepository : IAttributeRepository
     {
         var savedAttribute = _getAttributeById(attributeWithData.AttributeId)
             .MapToIAttributeWithValidation(_attributeTypeFactory, _attributeValidator);
-        // begin transaction
-
-        // edit attribute itself if needed
+        
         savedAttribute.Update(attributeWithData);
-        // edit data
-
-        // end transaction
     }
 
     public void DeleteAttributeById(Guid guid)
