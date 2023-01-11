@@ -55,6 +55,8 @@ public class SelectableTypeBearer : IAttributeTypeBearer
         var (attributeEntity, attributeData) = DecoupleAttributeWithData(attributeWithData);
         _dataRepository.UpdateAttribute(attributeEntity);
 
+        
+        
         if (typeIsChanged)
         {
             _dataRepository.CreateAttributeData(attributeData);
@@ -65,8 +67,7 @@ public class SelectableTypeBearer : IAttributeTypeBearer
             var selectableDataId = _dataRepository
                 .GetAttributeData(attributeEntity.AttributeId)
                 .SelectableAttributeId;
-
-            // direct cast is ok because attributeWithData passed validation after data-mapping
+            
             ((SelectableAttributeData) attributeData).SelectableAttributeId = selectableDataId;
             _dataRepository.UpdateAttributeData(attributeData);
         }

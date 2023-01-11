@@ -1,6 +1,7 @@
 using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
 using MageNetServices.AttributeRepository.DTO.Attributes;
+using MageNetServices.Exceptions;
 using MageNetServices.Interfaces;
 using Attribute = MageNetServices.AttributeRepository.DTO.Attributes.Attribute;
 
@@ -67,8 +68,6 @@ public static class AttributeMapper
 
         if (putAttributeWithData.SelectableOptions != null)
         {
-            // TODO Add new options if needed 
-
             // find saved options
             var savedOptions = savedAttributeWithData.SelectableOptions;
 
@@ -77,7 +76,7 @@ public static class AttributeMapper
                 // delete those options with to delete flag 
                 var optionsToDeleteIds = putAttributeWithData
                     .SelectableOptions
-                    .Where(x => x.IsToDelete);
+                    .Where(x => x is { IsToDelete: true, OptionId: { } });
 
                 savedOptions =
                     savedOptions.Where(opt => optionsToDeleteIds
@@ -87,7 +86,7 @@ public static class AttributeMapper
 
                 var updateDataForSavedOptions = putAttributeWithData
                     .SelectableOptions
-                    .Where(x => !x.IsToDelete).ToArray();
+                    .Where(x => x is { IsToDelete: false, OptionId: { } }).ToArray();
 
                 foreach (var option in savedOptions)
                 {
@@ -100,7 +99,30 @@ public static class AttributeMapper
                         option.IsDefaultValue = (bool)optionUpdateData.IsDefaultValue;
                 }
 
-                savedAttributeWithData.SelectableOptions = savedOptions;
+                // add new options if they are valid
+                var newOptions = putAttributeWithData.SelectableOptions.Where(x =>
+                    x is { OptionId: null, Value: { }, IsDefaultValue: { }, IsToDelete: false }).ToList();
+
+                var castedSavedOptions =
+                    savedOptions as IList<SelectableAttributeValue> ?? throw new InvalidCastException();
+
+                foreach (var validOption in newOptions)
+                {
+                    if (validOption.IsDefaultValue is null)
+                    {
+                        throw new DataUnderPostingException(
+                            "Each selectable option must be marked either as default or as non-default");
+                    }
+
+                    castedSavedOptions.Add(new SelectableAttributeValue()
+                    {
+                        AttributeId = savedAttributeWithData.AttributeId,
+                        IsDefaultValue = (bool)validOption.IsDefaultValue,
+                        Value = validOption.Value ?? throw new InvalidOperationException()
+                    });
+                }
+
+                savedAttributeWithData.SelectableOptions = castedSavedOptions;
             }
         }
 
