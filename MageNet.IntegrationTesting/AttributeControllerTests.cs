@@ -510,16 +510,14 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
             .Include(x => x.Values)
             .SingleAsync(data => data.AttributeId == selectableAttributeId));
 
-        var defaultOption = savedAttribute.Values.Single(x => x.IsDefaultValue && x.Value != "Untouchable")
-            ;
+        var defaultOption = savedAttribute.Values
+                .Single(x => x.IsDefaultValue && x.Value != "Untouchable");
 
         var nonDefaultOption = savedAttribute.Values
-                .Single(x => x.IsDefaultValue == false && x.Value != "Untouchable")
-            ;
+                .Single(x => x.IsDefaultValue == false && x.Value != "Untouchable");
 
         var untouchableOption = savedAttribute.Values
-                .Single(x => x.Value == "Untouchable")
-            ;
+                .Single(x => x.Value == "Untouchable");
 
         var putRequest = new PutAttributeWithData()
         {
@@ -699,7 +697,7 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
                 db.SelectableAttributes.Include(x => x.Values)
                     .SingleAsync(attr => attr.AttributeId == priceAttributeId))).Values,
             value => value.IsDefaultValue && value.Value == "Adding new option");
-        
+
         Assert.Contains((await _factory.UseDbContext(db =>
                 db.SelectableAttributes.Include(x => x.Values)
                     .SingleAsync(attr => attr.AttributeId == priceAttributeId))).Values,
@@ -724,8 +722,8 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
         // Act
 
         var response = await _httpClient.PutAsJsonAsync("attribute", putRequest);
-        
-        
+
+
         // Assert
 
         Assert.True(response.IsSuccessStatusCode);
@@ -755,7 +753,7 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
     public async Task TestPutTextAttributeWithConversionToSelectableAttribute_Ok()
     {
         // Arrange
-        
+
         var textAttributeId = await CreateTextAttribute();
 
         var putRequest = new PutAttributeWithData()
@@ -810,7 +808,7 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
                 db.SelectableAttributes.Include(x => x.Values)
                     .SingleAsync(attr => attr.AttributeId == textAttributeId))).Values,
             value => value.IsDefaultValue && value.Value == "Adding new option");
-        
+
         Assert.Contains((await _factory.UseDbContext(db =>
                 db.SelectableAttributes.Include(x => x.Values)
                     .SingleAsync(attr => attr.AttributeId == textAttributeId))).Values,
@@ -821,20 +819,87 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
     public async Task TestPutSelectableAttributeWithConversionToPriceAttribute_Ok()
     {
         // Arrange
+        var selectableAttributeId = await CreateSelectableAttribute();
+
+        var putRequest = new PutAttributeWithData()
+        {
+            AttributeId = selectableAttributeId,
+            AttributeName = "TestPutTextAttributeToPriceConversion",
+            DefaultLiteralValue = "1558489.2678946",
+            AttributeType = AttributeType.Price
+        };
 
         // Act
 
+        var response = await _httpClient.PutAsJsonAsync("attribute", putRequest);
+
+
         // Assert
+
+        Assert.True(response.IsSuccessStatusCode);
+
+        Assert.True(await _factory.UseDbContext(db => db.Attributes.AnyAsync(x => x.AttributeId == selectableAttributeId)));
+
+        Assert.True(await _factory.UseDbContext(db =>
+            db.PriceAttributes.AnyAsync(x => x.AttributeId == selectableAttributeId)));
+
+        Assert.Null(await _factory.UseDbContext(db =>
+            db.SelectableAttributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == selectableAttributeId)));
+
+        Assert.NotNull(await _factory.UseDbContext(db =>
+            db.Attributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == selectableAttributeId &&
+                x.AttributeName == putRequest.AttributeName &&
+                x.AttributeType == AttributeType.Price)));
+
+        Assert.NotNull(await _factory.UseDbContext(db =>
+            db.PriceAttributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == selectableAttributeId &&
+                x.DefaultValue == decimal.Parse(putRequest.DefaultLiteralValue))));
     }
 
     [Fact]
     public async Task TestPutSelectableAttributeWithConversionToTextAttribute_Ok()
     {
         // Arrange
+        var selectableAttributeId = await CreateSelectableAttribute();
+        
+        var putRequest = new PutAttributeWithData()
+        {
+            AttributeId = selectableAttributeId,
+            AttributeType = AttributeType.Text,
+            AttributeName = "TestPutPriceAttributeToTextConversion",
+            DefaultLiteralValue = "NewTextValue"
+        };
 
         // Act
 
+        var response = await _httpClient.PutAsJsonAsync("attribute", putRequest);
+
         // Assert
+
+        Assert.True(response.IsSuccessStatusCode);
+
+        Assert.True(await _factory.UseDbContext(db => db.Attributes.AnyAsync(x => x.AttributeId == selectableAttributeId)));
+
+        Assert.True(await _factory.UseDbContext(db =>
+            db.TextAttributes.AnyAsync(x => x.AttributeId == selectableAttributeId)));
+
+        Assert.Null(await _factory.UseDbContext(db =>
+            db.SelectableAttributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == selectableAttributeId)));
+
+        Assert.NotNull(await _factory.UseDbContext(db =>
+            db.Attributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == selectableAttributeId &&
+                x.AttributeName == putRequest.AttributeName &&
+                x.AttributeType == AttributeType.Text)));
+
+        Assert.NotNull(await _factory.UseDbContext(db =>
+            db.TextAttributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == selectableAttributeId &&
+                x.DefaultValue == putRequest.DefaultLiteralValue)));
     }
 
 
