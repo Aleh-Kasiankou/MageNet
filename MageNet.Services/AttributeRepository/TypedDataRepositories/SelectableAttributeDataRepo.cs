@@ -34,9 +34,25 @@ public class SelectableAttributeDataRepo : AttributeDataRepo<SelectableAttribute
 
     public override void UpdateAttributeData(IAttributeData attributeData)
     {
-        _dbContext.SelectableAttributes.Update(attributeData as SelectableAttributeData ??
-                                               throw new InvalidOperationException(
-                                                   $"Attribute Data cannot be safely casted to Selectable Attribute Data"));
+        var selectableAttributeData = attributeData as SelectableAttributeData ??
+                                      throw new InvalidOperationException(
+                                          $"Attribute Data cannot be safely casted to Selectable Attribute Data");
+
+        
+        var savedSelectableAttributeValues = _dbContext.SelectableAttributeValues.AsNoTracking().Where(x =>
+            x.AttributeId == selectableAttributeData.SelectableAttributeId).ToList();
+        
+        foreach (var option in savedSelectableAttributeValues)
+        {
+            if (selectableAttributeData.Values.All(x =>
+                    x.SelectableAttributeValueId != option.SelectableAttributeValueId))
+            {
+                _dbContext.SelectableAttributeValues.Remove(option);
+            }
+        }
+        // child entities are not tracked due to the mappings, so it is necessary to remove them manually
+
+        _dbContext.SelectableAttributes.Update(selectableAttributeData);
     }
 
     public override void DeleteAttributeData(Guid attributeId)

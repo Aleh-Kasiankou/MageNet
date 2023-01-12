@@ -73,7 +73,7 @@ public static class AttributeMapper
 
             if (savedOptions != null)
             {
-                // delete those options with to delete flag 
+                // delete those options with isToDelete flag 
                 var optionsToDeleteIds = putAttributeWithData
                     .SelectableOptions
                     .Where(x => x is { IsToDelete: true, OptionId: { } });
