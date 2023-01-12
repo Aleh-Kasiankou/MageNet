@@ -35,10 +35,17 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    using (var scope = app.Services.CreateScope())
+
+    if (app.Environment.IsEnvironment("Docker"))
     {
-        var mageNetContext = scope.ServiceProvider.GetRequiredService<MageNetDbContext>();
-        mageNetContext.Database.Migrate();
+        using (var scope = app.Services.CreateScope())
+        {
+            var mageNetContext = scope.ServiceProvider.GetRequiredService<MageNetDbContext>();
+            if (mageNetContext.Database.IsRelational())
+            {
+                mageNetContext.Database.Migrate();
+            }
+        }
     }
 }
 
@@ -54,3 +61,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program
+{
+}

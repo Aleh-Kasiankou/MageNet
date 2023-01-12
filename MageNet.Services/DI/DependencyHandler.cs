@@ -1,7 +1,6 @@
 ﻿using MageNet.Persistence;
 using MageNet.Persistence.Models.Attributes;
 using MageNetServices.AttributeRepository;
-using MageNetServices.AttributeRepository.DTO;
 using MageNetServices.AttributeRepository.DTO.Attributes;
 using MageNetServices.AttributeRepository.TypedDataRepositories;
 using MageNetServices.Interfaces;
