@@ -601,9 +601,43 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
     {
         // Arrange
 
+        var priceAttributeId = await CreatePriceAttribute();
+
+        var putRequest = new PutAttributeWithData()
+        {
+            AttributeId = priceAttributeId,
+            AttributeType = AttributeType.Text,
+            AttributeName = "TestPutPriceAttributeToTextConversion",
+            DefaultLiteralValue = "NewTextValue"
+        };
+
         // Act
 
+        var response = await _httpClient.PutAsJsonAsync("attribute", putRequest);
+
         // Assert
+
+        Assert.True(response.IsSuccessStatusCode);
+
+        Assert.True(await _factory.UseDbContext(db => db.Attributes.AnyAsync(x => x.AttributeId == priceAttributeId)));
+
+        Assert.True(await _factory.UseDbContext(db =>
+            db.TextAttributes.AnyAsync(x => x.AttributeId == priceAttributeId)));
+
+        Assert.Null(await _factory.UseDbContext(db =>
+            db.PriceAttributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == priceAttributeId)));
+
+        Assert.NotNull(await _factory.UseDbContext(db =>
+            db.Attributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == priceAttributeId &&
+                x.AttributeName == putRequest.AttributeName &&
+                x.AttributeType == AttributeType.Text)));
+
+        Assert.NotNull(await _factory.UseDbContext(db =>
+            db.TextAttributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == priceAttributeId &&
+                x.DefaultValue == putRequest.DefaultLiteralValue)));
     }
 
     [Fact]
@@ -611,9 +645,65 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
     {
         // Arrange
 
+        var priceAttributeId = await CreatePriceAttribute();
+
+        var putRequest = new PutAttributeWithData()
+        {
+            AttributeId = priceAttributeId,
+            AttributeType = AttributeType.Selectable,
+            AttributeName = "TestPutPriceAttributeToSelectableConversion",
+            IsMultipleSelect = true,
+            SelectableOptions = new List<PutSelectableOption>()
+            {
+                new()
+                {
+                    IsDefaultValue = true,
+                    Value = "Adding new option"
+                },
+                new()
+                {
+                    IsDefaultValue = false,
+                    Value = "Adding second option"
+                }
+            }
+        };
+
         // Act
 
+        var response = await _httpClient.PutAsJsonAsync("attribute", putRequest);
+
         // Assert
+
+        Assert.True(response.IsSuccessStatusCode);
+
+        Assert.True(await _factory.UseDbContext(db => db.Attributes.AnyAsync(x => x.AttributeId == priceAttributeId)));
+
+        Assert.True(await _factory.UseDbContext(db =>
+            db.SelectableAttributes.AnyAsync(x => x.AttributeId == priceAttributeId)));
+
+        Assert.Null(await _factory.UseDbContext(db =>
+            db.PriceAttributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == priceAttributeId)));
+
+        Assert.NotNull(await _factory.UseDbContext(db =>
+            db.Attributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == priceAttributeId &&
+                x.AttributeName == putRequest.AttributeName &&
+                x.AttributeType == AttributeType.Selectable)));
+
+        Assert.NotNull(await _factory.UseDbContext(db =>
+            db.SelectableAttributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == priceAttributeId)));
+
+        Assert.Contains((await _factory.UseDbContext(db =>
+                db.SelectableAttributes.Include(x => x.Values)
+                    .SingleAsync(attr => attr.AttributeId == priceAttributeId))).Values,
+            value => value.IsDefaultValue && value.Value == "Adding new option");
+        
+        Assert.Contains((await _factory.UseDbContext(db =>
+                db.SelectableAttributes.Include(x => x.Values)
+                    .SingleAsync(attr => attr.AttributeId == priceAttributeId))).Values,
+            value => !value.IsDefaultValue && value.Value == "Adding second option");
     }
 
     [Fact]
@@ -621,19 +711,110 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
     {
         // Arrange
 
+        var textAttributeId = await CreateTextAttribute();
+
+        var putRequest = new PutAttributeWithData()
+        {
+            AttributeId = textAttributeId,
+            AttributeName = "TestPutTextAttributeToPriceConversion",
+            DefaultLiteralValue = "1558489.2678946",
+            AttributeType = AttributeType.Price
+        };
+
         // Act
 
+        var response = await _httpClient.PutAsJsonAsync("attribute", putRequest);
+        
+        
         // Assert
+
+        Assert.True(response.IsSuccessStatusCode);
+
+        Assert.True(await _factory.UseDbContext(db => db.Attributes.AnyAsync(x => x.AttributeId == textAttributeId)));
+
+        Assert.True(await _factory.UseDbContext(db =>
+            db.PriceAttributes.AnyAsync(x => x.AttributeId == textAttributeId)));
+
+        Assert.Null(await _factory.UseDbContext(db =>
+            db.TextAttributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == textAttributeId)));
+
+        Assert.NotNull(await _factory.UseDbContext(db =>
+            db.Attributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == textAttributeId &&
+                x.AttributeName == putRequest.AttributeName &&
+                x.AttributeType == AttributeType.Price)));
+
+        Assert.NotNull(await _factory.UseDbContext(db =>
+            db.PriceAttributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == textAttributeId &&
+                x.DefaultValue == decimal.Parse(putRequest.DefaultLiteralValue))));
     }
 
     [Fact]
     public async Task TestPutTextAttributeWithConversionToSelectableAttribute_Ok()
     {
         // Arrange
+        
+        var textAttributeId = await CreateTextAttribute();
+
+        var putRequest = new PutAttributeWithData()
+        {
+            AttributeId = textAttributeId,
+            AttributeType = AttributeType.Selectable,
+            AttributeName = "TestPutPriceAttributeToSelectableConversion",
+            IsMultipleSelect = true,
+            SelectableOptions = new List<PutSelectableOption>()
+            {
+                new()
+                {
+                    IsDefaultValue = true,
+                    Value = "Adding new option"
+                },
+                new()
+                {
+                    IsDefaultValue = false,
+                    Value = "Adding second option"
+                }
+            }
+        };
 
         // Act
 
+        var response = await _httpClient.PutAsJsonAsync("attribute", putRequest);
+
         // Assert
+
+        Assert.True(response.IsSuccessStatusCode);
+
+        Assert.True(await _factory.UseDbContext(db => db.Attributes.AnyAsync(x => x.AttributeId == textAttributeId)));
+
+        Assert.True(await _factory.UseDbContext(db =>
+            db.SelectableAttributes.AnyAsync(x => x.AttributeId == textAttributeId)));
+
+        Assert.Null(await _factory.UseDbContext(db =>
+            db.TextAttributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == textAttributeId)));
+
+        Assert.NotNull(await _factory.UseDbContext(db =>
+            db.Attributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == textAttributeId &&
+                x.AttributeName == putRequest.AttributeName &&
+                x.AttributeType == AttributeType.Selectable)));
+
+        Assert.NotNull(await _factory.UseDbContext(db =>
+            db.SelectableAttributes.SingleOrDefaultAsync(x =>
+                x.AttributeId == textAttributeId)));
+
+        Assert.Contains((await _factory.UseDbContext(db =>
+                db.SelectableAttributes.Include(x => x.Values)
+                    .SingleAsync(attr => attr.AttributeId == textAttributeId))).Values,
+            value => value.IsDefaultValue && value.Value == "Adding new option");
+        
+        Assert.Contains((await _factory.UseDbContext(db =>
+                db.SelectableAttributes.Include(x => x.Values)
+                    .SingleAsync(attr => attr.AttributeId == textAttributeId))).Values,
+            value => !value.IsDefaultValue && value.Value == "Adding second option");
     }
 
     [Fact]

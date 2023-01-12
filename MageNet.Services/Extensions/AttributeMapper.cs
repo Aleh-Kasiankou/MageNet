@@ -98,32 +98,32 @@ public static class AttributeMapper
                     if (optionUpdateData is { IsDefaultValue: { } })
                         option.IsDefaultValue = (bool)optionUpdateData.IsDefaultValue;
                 }
+            }
+            
+            // add new options if they are valid
+            var newOptions = putAttributeWithData.SelectableOptions.Where(x =>
+                x is { OptionId: null, Value: { }, IsDefaultValue: { }, IsToDelete: false }).ToList();
+            
+            var castedSavedOptions =
+                savedOptions as IList<SelectableAttributeValue> ?? new List<SelectableAttributeValue>();
 
-                // add new options if they are valid
-                var newOptions = putAttributeWithData.SelectableOptions.Where(x =>
-                    x is { OptionId: null, Value: { }, IsDefaultValue: { }, IsToDelete: false }).ToList();
-
-                var castedSavedOptions =
-                    savedOptions as IList<SelectableAttributeValue> ?? throw new InvalidCastException();
-
-                foreach (var validOption in newOptions)
+            foreach (var validOption in newOptions)
+            {
+                if (validOption.IsDefaultValue is null)
                 {
-                    if (validOption.IsDefaultValue is null)
-                    {
-                        throw new DataUnderPostingException(
-                            "Each selectable option must be marked either as default or as non-default");
-                    }
-
-                    castedSavedOptions.Add(new SelectableAttributeValue()
-                    {
-                        AttributeId = savedAttributeWithData.AttributeId,
-                        IsDefaultValue = (bool)validOption.IsDefaultValue,
-                        Value = validOption.Value ?? throw new InvalidOperationException()
-                    });
+                    throw new DataUnderPostingException(
+                        "Each selectable option must be marked either as default or as non-default");
                 }
 
-                savedAttributeWithData.SelectableOptions = castedSavedOptions;
+                castedSavedOptions.Add(new SelectableAttributeValue()
+                {
+                    AttributeId = savedAttributeWithData.AttributeId,
+                    IsDefaultValue = (bool)validOption.IsDefaultValue,
+                    Value = validOption.Value ?? throw new InvalidOperationException()
+                });
             }
+
+            savedAttributeWithData.SelectableOptions = castedSavedOptions;
         }
 
         if (putAttributeWithData.IsMultipleSelect != null)
