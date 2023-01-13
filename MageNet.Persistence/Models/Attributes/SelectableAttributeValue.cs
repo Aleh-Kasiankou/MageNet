@@ -2,11 +2,11 @@
 
 namespace MageNet.Persistence.Models.Attributes;
 
-public class SelectableAttributeValue
+public class SelectableAttributeOption
 {
-    public Guid SelectableAttributeValueId { get; set; }
+    public Guid OptionId { get; set; }
     
-    public Guid AttributeId { get; set; }
+    public Guid AttributeDataId { get; set; }
     [JsonIgnore]
     public virtual SelectableAttributeData Attribute { get; set; }
     

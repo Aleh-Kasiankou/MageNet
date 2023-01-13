@@ -11,7 +11,7 @@ public class MageNetDbContext : DbContext
     public DbSet<AttributeEntity> Attributes { get; set; }
     public DbSet<PriceAttributeData> PriceAttributes { get; set; }
     public DbSet<SelectableAttributeData> SelectableAttributes { get; set; }
-    public DbSet<SelectableAttributeValue> SelectableAttributeValues { get; set; }
+    public DbSet<SelectableAttributeOption> SelectableAttributeValues { get; set; }
     public DbSet<TextAttributeData> TextAttributes { get; set; }
 
     public MageNetDbContext(DbContextOptions<MageNetDbContext> options) :
@@ -87,11 +87,11 @@ public class MageNetDbContext : DbContext
             .WithOne().HasForeignKey<SelectableAttributeData>(x => x.AttributeId).OnDelete(DeleteBehavior.Cascade);
 
 
-        modelBuilder.Entity<SelectableAttributeValue>().HasKey(x => x.SelectableAttributeValueId);
-        modelBuilder.Entity<SelectableAttributeValue>().Property(x => x.AttributeId).IsRequired();
-        modelBuilder.Entity<SelectableAttributeValue>().Property(x => x.Value).IsRequired();
-        modelBuilder.Entity<SelectableAttributeValue>().Property(x => x.Value).HasColumnType("nvarchar(255)");
-        modelBuilder.Entity<SelectableAttributeValue>().HasOne(x => x.Attribute)
-            .WithMany(x => x.Values).HasForeignKey(x => x.AttributeId).OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<SelectableAttributeOption>().HasKey(x => x.OptionId);
+        modelBuilder.Entity<SelectableAttributeOption>().Property(x => x.AttributeDataId).IsRequired();
+        modelBuilder.Entity<SelectableAttributeOption>().Property(x => x.Value).IsRequired();
+        modelBuilder.Entity<SelectableAttributeOption>().Property(x => x.Value).HasColumnType("nvarchar(255)");
+        modelBuilder.Entity<SelectableAttributeOption>().HasOne(x => x.Attribute)
+            .WithMany(x => x.Values).HasForeignKey(x => x.AttributeDataId).OnDelete(DeleteBehavior.Cascade);
     }
 }

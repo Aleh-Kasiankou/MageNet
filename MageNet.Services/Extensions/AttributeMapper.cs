@@ -40,7 +40,7 @@ public static class AttributeMapper
             DefaultLiteralValue = postAttributeWithData.DefaultLiteralValue,
             EntityId = postAttributeWithData.EntityId,
             IsMultipleSelect = postAttributeWithData.IsMultipleSelect,
-            SelectableOptions = postAttributeWithData.SelectableOptions?.Select(x => new SelectableAttributeValue()
+            SelectableOptions = postAttributeWithData.SelectableOptions?.Select(x => new SelectableAttributeOption()
             {
                 IsDefaultValue = x.IsDefaultValue,
                 Value = x.Value
@@ -80,7 +80,7 @@ public static class AttributeMapper
 
                 savedOptions =
                     savedOptions.Where(opt => optionsToDeleteIds
-                        .All(x => x.OptionId != opt.SelectableAttributeValueId)).ToList();
+                        .All(x => x.OptionId != opt.OptionId)).ToList();
 
                 // map options that are not to be deleted
 
@@ -92,7 +92,7 @@ public static class AttributeMapper
                 {
                     var optionUpdateData = updateDataForSavedOptions
                         .SingleOrDefault(x =>
-                            x.OptionId == option.SelectableAttributeValueId);
+                            x.OptionId == option.OptionId);
 
                     if (optionUpdateData is { Value: { } }) option.Value = optionUpdateData.Value;
                     if (optionUpdateData is { IsDefaultValue: { } })
@@ -105,7 +105,7 @@ public static class AttributeMapper
                 x is { OptionId: null, Value: { }, IsDefaultValue: { }, IsToDelete: false }).ToList();
             
             var castedSavedOptions =
-                savedOptions as IList<SelectableAttributeValue> ?? new List<SelectableAttributeValue>();
+                savedOptions as IList<SelectableAttributeOption> ?? new List<SelectableAttributeOption>();
 
             foreach (var validOption in newOptions)
             {
@@ -115,9 +115,9 @@ public static class AttributeMapper
                         "Each selectable option must be marked either as default or as non-default");
                 }
 
-                castedSavedOptions.Add(new SelectableAttributeValue()
+                castedSavedOptions.Add(new SelectableAttributeOption()
                 {
-                    AttributeId = savedAttributeWithData.AttributeId,
+                    AttributeDataId = savedAttributeWithData.AttributeId,
                     IsDefaultValue = (bool)validOption.IsDefaultValue,
                     Value = validOption.Value ?? throw new InvalidOperationException()
                 });

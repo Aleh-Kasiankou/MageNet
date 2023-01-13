@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MageNet.Persistence.Migrations
 {
     [DbContext(typeof(MageNetDbContext))]
-    [Migration("20221227072153_init_Attribute_Entity")]
-    partial class init_Attribute_Entity
+    [Migration("20230113073010_Add_Attributes_Scheme")]
+    partial class Add_Attributes_Scheme
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,7 @@ namespace MageNet.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.Attribute", b =>
+            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.AttributeEntity", b =>
                 {
                     b.Property<Guid>("AttributeId")
                         .ValueGeneratedOnAdd()
@@ -34,8 +34,8 @@ namespace MageNet.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("AttributeType")
-                        .HasColumnType("int");
+                    b.Property<byte>("AttributeType")
+                        .HasColumnType("tinyint");
 
                     b.Property<Guid>("EntityId")
                         .HasColumnType("uniqueidentifier");
@@ -47,7 +47,7 @@ namespace MageNet.Persistence.Migrations
                     b.ToTable("Attributes");
                 });
 
-            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.PriceAttribute", b =>
+            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.PriceAttributeData", b =>
                 {
                     b.Property<Guid>("PriceAttributeId")
                         .ValueGeneratedOnAdd()
@@ -68,7 +68,7 @@ namespace MageNet.Persistence.Migrations
                     b.ToTable("PriceAttributes");
                 });
 
-            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.SelectableAttribute", b =>
+            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.SelectableAttributeData", b =>
                 {
                     b.Property<Guid>("SelectableAttributeId")
                         .ValueGeneratedOnAdd()
@@ -88,13 +88,13 @@ namespace MageNet.Persistence.Migrations
                     b.ToTable("SelectableAttributes");
                 });
 
-            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.SelectableAttributeValue", b =>
+            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.SelectableAttributeOption", b =>
                 {
-                    b.Property<Guid>("SelectableAttributeValueId")
+                    b.Property<Guid>("OptionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AttributeId")
+                    b.Property<Guid>("AttributeDataId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDefaultValue")
@@ -104,14 +104,14 @@ namespace MageNet.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("SelectableAttributeValueId");
+                    b.HasKey("OptionId");
 
-                    b.HasIndex("AttributeId");
+                    b.HasIndex("AttributeDataId");
 
                     b.ToTable("SelectableAttributeValues");
                 });
 
-            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.TextAttribute", b =>
+            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.TextAttributeData", b =>
                 {
                     b.Property<Guid>("TextAttributeId")
                         .ValueGeneratedOnAdd()
@@ -176,7 +176,7 @@ namespace MageNet.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.Attribute", b =>
+            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.AttributeEntity", b =>
                 {
                     b.HasOne("MageNet.Persistence.Models.Entity", "Entity")
                         .WithMany()
@@ -187,51 +187,51 @@ namespace MageNet.Persistence.Migrations
                     b.Navigation("Entity");
                 });
 
-            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.PriceAttribute", b =>
+            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.PriceAttributeData", b =>
                 {
-                    b.HasOne("MageNet.Persistence.Models.Attributes.Attribute", "Attribute")
+                    b.HasOne("MageNet.Persistence.Models.Attributes.AttributeEntity", "Attribute")
                         .WithOne()
-                        .HasForeignKey("MageNet.Persistence.Models.Attributes.PriceAttribute", "AttributeId")
+                        .HasForeignKey("MageNet.Persistence.Models.Attributes.PriceAttributeData", "AttributeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Attribute");
                 });
 
-            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.SelectableAttribute", b =>
+            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.SelectableAttributeData", b =>
                 {
-                    b.HasOne("MageNet.Persistence.Models.Attributes.Attribute", "Attribute")
+                    b.HasOne("MageNet.Persistence.Models.Attributes.AttributeEntity", "Attribute")
                         .WithOne()
-                        .HasForeignKey("MageNet.Persistence.Models.Attributes.SelectableAttribute", "AttributeId")
+                        .HasForeignKey("MageNet.Persistence.Models.Attributes.SelectableAttributeData", "AttributeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Attribute");
                 });
 
-            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.SelectableAttributeValue", b =>
+            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.SelectableAttributeOption", b =>
                 {
-                    b.HasOne("MageNet.Persistence.Models.Attributes.SelectableAttribute", "Attribute")
+                    b.HasOne("MageNet.Persistence.Models.Attributes.SelectableAttributeData", "Attribute")
                         .WithMany("Values")
-                        .HasForeignKey("AttributeId")
+                        .HasForeignKey("AttributeDataId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Attribute");
                 });
 
-            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.TextAttribute", b =>
+            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.TextAttributeData", b =>
                 {
-                    b.HasOne("MageNet.Persistence.Models.Attributes.Attribute", "Attribute")
+                    b.HasOne("MageNet.Persistence.Models.Attributes.AttributeEntity", "Attribute")
                         .WithOne()
-                        .HasForeignKey("MageNet.Persistence.Models.Attributes.TextAttribute", "AttributeId")
+                        .HasForeignKey("MageNet.Persistence.Models.Attributes.TextAttributeData", "AttributeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Attribute");
                 });
 
-            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.SelectableAttribute", b =>
+            modelBuilder.Entity("MageNet.Persistence.Models.Attributes.SelectableAttributeData", b =>
                 {
                     b.Navigation("Values");
                 });

@@ -7,5 +7,5 @@ public interface ISelectableAttributeData
     public Guid SelectableAttributeId { get; set; }
 
     public bool IsMultipleSelect { get; set; }
-    public IEnumerable<SelectableAttributeValue> Values { get; set; }
+    public IEnumerable<SelectableAttributeOption> Values { get; set; }
 }
