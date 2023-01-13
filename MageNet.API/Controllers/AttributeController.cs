@@ -1,5 +1,5 @@
-﻿using MageNetServices.AttributeRepository;
-using MageNetServices.AttributeRepository.DTO.Attributes;
+﻿using MageNetServices.AttributeRepository.DTO.Attributes;
+using MageNetServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MageNet.Controllers;
@@ -49,7 +49,7 @@ public class AttributeController : ControllerBase
             return Ok(_attributeRepository.CreateNewAttribute(attributeWithData));
         }
 
-        catch (Exception e)
+        catch (ApplicationException e)
         {
             return BadRequest(e.Message);
         }
@@ -57,13 +57,14 @@ public class AttributeController : ControllerBase
 
 
     [HttpPut]
-    public IActionResult PutProductAttribute([FromBody] AttributeWithData updatedAttributeWithData)
+    public IActionResult PutProductAttribute([FromBody] PutAttributeWithData putAttributeWithData)
     {
         try
         {
-            return Ok(_attributeRepository.UpdateAttribute(updatedAttributeWithData));
+            _attributeRepository.UpdateAttribute(putAttributeWithData);
+            return Ok();
         }
-        catch (Exception e)
+        catch (ApplicationException e)
         {
             return BadRequest(e.Message);
         }

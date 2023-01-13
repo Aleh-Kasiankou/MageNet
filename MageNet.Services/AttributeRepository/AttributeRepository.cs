@@ -1,187 +1,80 @@
-﻿using System.ComponentModel.DataAnnotations;
 using MageNet.Persistence;
-using MageNet.Persistence.Models.AbstractModels.ModelEnums;
+using MageNet.Persistence.Exceptions;
+using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
-using MageNetServices.AttributeRepository.AttributeBuilder;
-using MageNetServices.AttributeRepository.DTO.Attributes;
-using MageNetServices.AttributeValidator;
+using MageNetServices.Extensions;
+using MageNetServices.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Attribute = MageNetServices.AttributeRepository.DTO.Attributes.Attribute;
 
 namespace MageNetServices.AttributeRepository;
 
 public class AttributeRepository : IAttributeRepository
 {
     private readonly MageNetDbContext _dbContext;
-    private readonly IAttributeBuilder _attributeBuilder;
+    private readonly IAttributeTypeFactory _attributeTypeFactory;
     private readonly IAttributeValidator _attributeValidator;
 
-    public AttributeRepository(MageNetDbContext dbContext,
+
+    public AttributeRepository(MageNetDbContext dbContext, IAttributeTypeFactory attributeTypeFactory,
         IAttributeValidator attributeValidator)
     {
         _dbContext = dbContext;
-        _attributeBuilder = new AttributeBuilder.AttributeBuilder(dbContext);
+        _attributeTypeFactory = attributeTypeFactory;
         _attributeValidator = attributeValidator;
     }
 
-    public IEnumerable<AttributeWithData> GetAttributes()
+    public IEnumerable<IAttributeWithData> GetAttributes()
     {
-        var attributesWithoutDetails = _dbContext.Attributes.ToArray();
-        return attributesWithoutDetails.Select(x => _attributeBuilder.GetAttributeWithData(x));
+        var attributes = _dbContext.Attributes.ToArray().Select(attr =>
+            attr.MapToIAttributeWithNoValidation(_attributeTypeFactory));
+
+        // map to IAttribute
+
+
+        return attributes.Select(attribute => attribute.JoinWithSavedData())
+            .ToArray();
     }
 
-    public AttributeWithData GetAttributeById(Guid guid)
+    public IAttributeWithData GetAttributeById(Guid guid)
     {
-        var attributeWithoutDetails = _dbContext.Attributes.SingleOrDefault(x => x.AttributeId == guid);
-        if (attributeWithoutDetails != null)
-        {
-            return _attributeBuilder.GetAttributeWithData(attributeWithoutDetails);
-        }
-        else
-        {
-            throw new ArgumentException($"Attribute with id '{guid}' does not exist");
-        }
+        var attribute = _getAttributeById(guid).MapToIAttributeWithNoValidation(_attributeTypeFactory);
+        return attribute.JoinWithSavedData();
     }
 
-    public Guid CreateNewAttribute(PostAttributeWithData postAttributeWithData)
+    public Guid CreateNewAttribute(IPostAttributeWithData postAttributeWithData)
     {
-        var attributeWithData = new AttributeWithData()
+        return new Attribute(_attributeValidator, _attributeTypeFactory)
         {
-            AttributeName = postAttributeWithData.AttributeName,
-            AttributeType = postAttributeWithData.AttributeType,
-            DefaultLiteralValue = postAttributeWithData.DefaultLiteralValue,
-            EntityId = postAttributeWithData.EntityId,
-            IsMultipleSelect = postAttributeWithData.IsMultipleSelect,
-            SelectableOptions = postAttributeWithData.SelectableOptions?
-                .Select(x => new SelectableAttributeValue
-                {
-                    IsDefaultValue = x.IsDefaultValue,
-                    Value = x.Value
-                })
-        };
-
-        (bool isValid, IEnumerable<ValidationException> exceptions) =
-            _attributeValidator.CheckAttributeValidity(attributeWithData);
-
-        if (isValid)
-        {
-            return _attributeBuilder.CreateAttributeWithData(attributeWithData);
-        }
-
-        else
-        {
-            var msg = "Validation Error. The following issues have been discovered:\n";
-            var exceptionMsg = string.Join("\n", exceptions.Select(x => x.Message));
-            throw new ValidationException(msg + exceptionMsg);
-        }
+            AttributeType = _attributeTypeFactory.CreateAttributeType(postAttributeWithData.AttributeType)
+        }.CreateNewDbEntry(postAttributeWithData);
     }
 
-    public AttributeWithData UpdateAttribute(AttributeWithData updatedAttributeWithData)
+    public void UpdateAttribute(IPutAttributeWithData attributeWithData)
     {
-        updatedAttributeWithData = FillMissingProperties(updatedAttributeWithData);
-
-        (bool isValid, IEnumerable<ValidationException> exceptions) =
-            _attributeValidator.CheckAttributeValidity(updatedAttributeWithData);
-
-        if (isValid)
-        {
-            return _attributeBuilder.UpdateAttributeWithData(updatedAttributeWithData);
-        }
-
-        else
-        {
-            var msg = "Validation Error. The following issues have been discovered:\n";
-            var exceptionMsg = string.Join(",", exceptions);
-            throw new ValidationException(msg + exceptionMsg);
-        }
+        var savedAttribute = _getAttributeById(attributeWithData.AttributeId)
+            .MapToIAttributeWithValidation(_attributeTypeFactory, _attributeValidator);
+        
+        savedAttribute.Update(attributeWithData);
     }
-
-    private AttributeWithData FillMissingProperties(AttributeWithData updatedAttributeWithData)
-    {
-        var savedAttributeWithData = GetAttributeById(updatedAttributeWithData.AttributeId);
-        if (updatedAttributeWithData.AttributeType != null)
-        {
-            savedAttributeWithData.AttributeType = updatedAttributeWithData.AttributeType;
-        }
-
-        if (updatedAttributeWithData.AttributeName != null)
-        {
-            savedAttributeWithData.AttributeName = updatedAttributeWithData.AttributeName;
-        }
-
-        if (updatedAttributeWithData.SelectableOptions != null &&
-            savedAttributeWithData.AttributeType == AttributeType.Selectable)
-        {
-            savedAttributeWithData.SelectableOptions = updatedAttributeWithData.SelectableOptions;
-        }
-
-        if (updatedAttributeWithData.DefaultLiteralValue != null &&
-            savedAttributeWithData.AttributeType != AttributeType.Selectable)
-        {
-            savedAttributeWithData.DefaultLiteralValue = updatedAttributeWithData.DefaultLiteralValue;
-        }
-
-        if (updatedAttributeWithData.IsMultipleSelect != null &&
-            savedAttributeWithData.AttributeType == AttributeType.Selectable)
-        {
-            savedAttributeWithData.IsMultipleSelect = updatedAttributeWithData.IsMultipleSelect;
-        }
-
-        return savedAttributeWithData;
-    }
-
 
     public void DeleteAttributeById(Guid guid)
     {
-        using (var dbContextTransaction = _dbContext.Database.BeginTransaction())
+        var attribute = _getAttributeById(guid);
+        _dbContext.Attributes.Remove((AttributeEntity)attribute);
+        _dbContext.SaveChanges();
+    }
+
+    private IAttributeEntity _getAttributeById(Guid guid)
+    {
+        var attribute = _dbContext.Attributes.AsNoTracking()
+            .SingleOrDefault(attr => attr.AttributeId == guid);
+
+        if (attribute == null)
         {
-            var attributeToRemove = _dbContext.Attributes.SingleOrDefault(x => x.AttributeId == guid);
-            if (attributeToRemove == null)
-            {
-                throw new ArgumentException(
-                    $"Unable to delete the attribute. The attribute with id '{guid}' does not exist");
-            }
-
-            _dbContext.Attributes.Remove(attributeToRemove);
-            switch (attributeToRemove.AttributeType)
-            {
-                case AttributeType.Price:
-                    var priceAttributeDataToRemove =
-                        _dbContext.PriceAttributes.SingleOrDefault(x => x.AttributeId == guid);
-                    if (priceAttributeDataToRemove != null)
-                    {
-                        _dbContext.PriceAttributes.Remove(priceAttributeDataToRemove);
-                    }
-
-                    break;
-
-                case AttributeType.Text:
-                    var textAttributeDataToRemove =
-                        _dbContext.TextAttributes.SingleOrDefault(x => x.AttributeId == guid);
-                    if (textAttributeDataToRemove != null)
-                    {
-                        _dbContext.TextAttributes.Remove(textAttributeDataToRemove);
-                    }
-
-                    break;
-
-                case AttributeType.Selectable:
-                    var selectableAttributeDataToRemove =
-                        _dbContext.SelectableAttributes.SingleOrDefault(x => x.AttributeId == guid);
-                    if (selectableAttributeDataToRemove != null)
-                    {
-                        _dbContext.SelectableAttributes.Remove(selectableAttributeDataToRemove);
-                    }
-
-                    break;
-
-                default:
-                    dbContextTransaction.Rollback();
-                    throw new ArgumentException(
-                        $"Unable to delete attribute data. Unknown attribute type: '{attributeToRemove.AttributeType.ToString()}'");
-            }
-
-            _dbContext.SaveChanges();
-
-            dbContextTransaction.Commit();
+            throw new AttributeNotFoundException();
         }
+
+        return attribute;
     }
 }

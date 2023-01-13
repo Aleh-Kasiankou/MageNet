@@ -2,6 +2,7 @@
 using System.Reflection;
 using MageNet.Persistence.Models.AbstractModels.ModelEnums;
 using MageNetServices.AttributeRepository.DTO.Attributes;
+using MageNetServices.Interfaces;
 
 namespace MageNetServices.AttributeValidator;
 
@@ -9,7 +10,7 @@ public class AttributeValidator : IAttributeValidator
 {
     private List<ValidationException> Exceptions { get; set; } = new();
 
-    public (bool, IEnumerable<ValidationException>) CheckAttributeValidity(AttributeWithData attributeWithData)
+    public (bool isValid, IEnumerable<ValidationException> validationErrors) CheckAttributeValidity(IAttributeWithData attributeWithData)
     {
         var isValid = false;
 
@@ -39,16 +40,6 @@ public class AttributeValidator : IAttributeValidator
     private IEnumerable<ValidationException> CheckRequiredFields(AttributeWithData attributeWithData)
     {
         var exceptions = new List<ValidationException>();
-
-        if (attributeWithData.AttributeType == null)
-        {
-            exceptions.Add(new ValidationException("Attribute Type cannot be null"));
-        }
-        
-        if (attributeWithData.EntityId == null)
-        {
-            exceptions.Add(new ValidationException("Entity Id cannot be null"));
-        }
 
         if (attributeWithData.AttributeName == null || string.IsNullOrWhiteSpace(attributeWithData.AttributeName))
         {
@@ -112,6 +103,21 @@ public class AttributeValidator : IAttributeValidator
             }
         }
 
+
+        return exceptions;
+    }
+
+    private IEnumerable<ValidationException> CheckPriceAttributeDefaultValue(IAttributeWithData attributeWithData)
+    {
+        var exceptions = new List<ValidationException>();
+
+        if (attributeWithData.AttributeType == AttributeType.Price)
+        {
+            if (!decimal.TryParse(attributeWithData.DefaultLiteralValue, out _))
+            {
+                exceptions.Add(new ValidationException("Default value for the price attribute must be numeric"));
+            }
+        }
 
         return exceptions;
     }

@@ -33,7 +33,7 @@ namespace MageNet.Persistence.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("AttributeType")
-                        .HasColumnType("int");
+                        .HasColumnType("tinyint");
 
                     b.Property<Guid>("EntityId")
                         .HasColumnType("uniqueidentifier");

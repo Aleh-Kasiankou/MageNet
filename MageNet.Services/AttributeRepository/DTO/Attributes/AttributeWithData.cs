@@ -1,15 +1,16 @@
 ﻿using MageNet.Persistence.Models.AbstractModels.ModelEnums;
+using MageNet.Persistence.Models.AbstractModels.ModelInterfaces;
 using MageNet.Persistence.Models.Attributes;
-using Attribute = MageNet.Persistence.Models.Attributes.Attribute;
+using MageNetServices.Interfaces;
 
 namespace MageNetServices.AttributeRepository.DTO.Attributes;
 
-public class AttributeWithData
+public class AttributeWithData : IAttributeWithData
 {
     public Guid AttributeId { get; set; }
-    public Guid? EntityId { get; set; }
-    public string? AttributeName { get; set; }
-    public AttributeType? AttributeType { get; set; }
+    public Guid EntityId { get; set; }
+    public string AttributeName { get; set; }
+    public AttributeType AttributeType { get; set; }
     public string? DefaultLiteralValue { get; set; }
     public IEnumerable<SelectableAttributeValue>? SelectableOptions { get; set; }
 
@@ -20,7 +21,7 @@ public class AttributeWithData
         
     }
     
-    public AttributeWithData(Attribute attribute, PriceAttribute priceAttributeData)
+    public AttributeWithData(IAttributeEntity attribute, PriceAttributeData priceAttributeData)
     {
         AttributeId = attribute.AttributeId;
         EntityId = attribute.EntityId;
@@ -31,7 +32,7 @@ public class AttributeWithData
         IsMultipleSelect = null;
     }
 
-    public AttributeWithData(Attribute attribute, TextAttribute textAttributeData)
+    public AttributeWithData(IAttributeEntity attribute, TextAttributeData textAttributeData)
     {
         AttributeId = attribute.AttributeId;
         EntityId = attribute.EntityId;
@@ -42,7 +43,7 @@ public class AttributeWithData
         IsMultipleSelect = null;
     }
 
-    public AttributeWithData(Attribute attribute, SelectableAttribute selectableAttributeData)
+    public AttributeWithData(IAttributeEntity attribute, SelectableAttributeData selectableAttributeData)
     {
         AttributeId = attribute.AttributeId;
         EntityId = attribute.EntityId;

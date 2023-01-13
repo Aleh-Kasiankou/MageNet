@@ -8,7 +8,7 @@ public class SelectableAttributeValue
     
     public Guid AttributeId { get; set; }
     [JsonIgnore]
-    public virtual SelectableAttribute Attribute { get; set; }
+    public virtual SelectableAttributeData Attribute { get; set; }
     
     public string Value { get; set; } 
     public bool IsDefaultValue { get; set; }
