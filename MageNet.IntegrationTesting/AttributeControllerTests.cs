@@ -385,9 +385,9 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
         {
             Attribute = testAttribute,
             IsMultipleSelect = false,
-            Values = new List<SelectableAttributeValue>()
+            Values = new List<SelectableAttributeOption>()
             {
-                new SelectableAttributeValue()
+                new SelectableAttributeOption()
                 {
                     IsDefaultValue = true,
                     Value = "TestDeleteSelectableValueAfterDeletingSelectableAttribute"
@@ -534,14 +534,14 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
 
                 new()
                 {
-                    OptionId = nonDefaultOption.SelectableAttributeValueId,
+                    OptionId = nonDefaultOption.OptionId,
                     IsDefaultValue = true,
                     Value = "NowThisOptionIsDefault"
                 },
 
                 new()
                 {
-                    OptionId = defaultOption.SelectableAttributeValueId,
+                    OptionId = defaultOption.OptionId,
                     IsToDelete = true
                 }
             }
@@ -572,26 +572,26 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
                 x.IsMultipleSelect != savedAttribute.IsMultipleSelect)));
 
         Assert.Contains(await _factory.UseDbContext(db =>
-                db.SelectableAttributeValues.Where(x => x.AttributeId == savedAttribute.SelectableAttributeId)
+                db.SelectableAttributeValues.Where(x => x.AttributeDataId == savedAttribute.SelectableAttributeId)
                     .ToListAsync()),
-            opt => opt.SelectableAttributeValueId == untouchableOption.SelectableAttributeValueId &&
+            opt => opt.OptionId == untouchableOption.OptionId &&
                    opt.IsDefaultValue == untouchableOption.IsDefaultValue && opt.Value == untouchableOption.Value);
 
         Assert.Contains(await _factory.UseDbContext(db =>
-                db.SelectableAttributeValues.Where(x => x.AttributeId == savedAttribute.SelectableAttributeId)
+                db.SelectableAttributeValues.Where(x => x.AttributeDataId == savedAttribute.SelectableAttributeId)
                     .ToListAsync()),
-            opt => opt.SelectableAttributeValueId == nonDefaultOption.SelectableAttributeValueId &&
+            opt => opt.OptionId == nonDefaultOption.OptionId &&
                    opt.IsDefaultValue != nonDefaultOption.IsDefaultValue && opt.Value == "NowThisOptionIsDefault");
 
         Assert.Contains(await _factory.UseDbContext(db =>
-                db.SelectableAttributeValues.Where(x => x.AttributeId == savedAttribute.SelectableAttributeId)
+                db.SelectableAttributeValues.Where(x => x.AttributeDataId == savedAttribute.SelectableAttributeId)
                     .ToListAsync()),
             opt => opt.Value == "Adding new option" && opt.IsDefaultValue);
 
         Assert.DoesNotContain(await _factory.UseDbContext(db =>
-                db.SelectableAttributeValues.Where(x => x.AttributeId == savedAttribute.SelectableAttributeId)
+                db.SelectableAttributeValues.Where(x => x.AttributeDataId == savedAttribute.SelectableAttributeId)
                     .ToListAsync()),
-            opt => opt.SelectableAttributeValueId == defaultOption.SelectableAttributeValueId);
+            opt => opt.OptionId == defaultOption.OptionId);
     }
 
     [Fact]
@@ -973,9 +973,9 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
         {
             Attribute = testAttribute,
             IsMultipleSelect = false,
-            Values = new List<SelectableAttributeValue>()
+            Values = new List<SelectableAttributeOption>()
             {
-                new SelectableAttributeValue()
+                new SelectableAttributeOption()
                 {
                     IsDefaultValue = true,
                     Value = "TestCreateDefaultSelectableValue"

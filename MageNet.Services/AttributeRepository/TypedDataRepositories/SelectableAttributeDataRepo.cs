@@ -40,12 +40,12 @@ public class SelectableAttributeDataRepo : AttributeDataRepo<SelectableAttribute
 
         
         var savedSelectableAttributeValues = _dbContext.SelectableAttributeValues.AsNoTracking().Where(x =>
-            x.AttributeId == selectableAttributeData.SelectableAttributeId).ToList();
+            x.AttributeDataId == selectableAttributeData.SelectableAttributeId).ToList();
         
         foreach (var option in savedSelectableAttributeValues)
         {
             if (selectableAttributeData.Values.All(x =>
-                    x.SelectableAttributeValueId != option.SelectableAttributeValueId))
+                    x.OptionId != option.OptionId))
             {
                 _dbContext.SelectableAttributeValues.Remove(option);
             }

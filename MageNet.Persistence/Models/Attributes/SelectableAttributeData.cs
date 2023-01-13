@@ -9,5 +9,5 @@ public class SelectableAttributeData : IAttributeData, ISelectableAttributeData
     public virtual AttributeEntity Attribute { get; set; }
 
     public bool IsMultipleSelect { get; set; }
-    public IEnumerable<SelectableAttributeValue> Values { get; set; } = new List<SelectableAttributeValue>();
+    public IEnumerable<SelectableAttributeOption> Values { get; set; } = new List<SelectableAttributeOption>();
 }

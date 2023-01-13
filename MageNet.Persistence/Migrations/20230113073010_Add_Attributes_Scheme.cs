@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MageNet.Persistence.Migrations
 {
-    public partial class init_Attribute_Entity : Migration
+    public partial class Add_Attributes_Scheme : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -28,8 +28,8 @@ namespace MageNet.Persistence.Migrations
                 {
                     AttributeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AttributeName = table.Column<string>(type: "nvarchar(100)", nullable: false),
-                    AttributeType = table.Column<int>(type: "int", nullable: false),
-                    EntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    EntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AttributeType = table.Column<byte>(type: "tinyint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -103,17 +103,17 @@ namespace MageNet.Persistence.Migrations
                 name: "SelectableAttributeValues",
                 columns: table => new
                 {
-                    SelectableAttributeValueId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AttributeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AttributeDataId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(255)", nullable: false),
                     IsDefaultValue = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SelectableAttributeValues", x => x.SelectableAttributeValueId);
+                    table.PrimaryKey("PK_SelectableAttributeValues", x => x.OptionId);
                     table.ForeignKey(
-                        name: "FK_SelectableAttributeValues_SelectableAttributes_AttributeId",
-                        column: x => x.AttributeId,
+                        name: "FK_SelectableAttributeValues_SelectableAttributes_AttributeDataId",
+                        column: x => x.AttributeDataId,
                         principalTable: "SelectableAttributes",
                         principalColumn: "SelectableAttributeId",
                         onDelete: ReferentialAction.Cascade);
@@ -148,9 +148,9 @@ namespace MageNet.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_SelectableAttributeValues_AttributeId",
+                name: "IX_SelectableAttributeValues_AttributeDataId",
                 table: "SelectableAttributeValues",
-                column: "AttributeId");
+                column: "AttributeDataId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TextAttributes_AttributeId",

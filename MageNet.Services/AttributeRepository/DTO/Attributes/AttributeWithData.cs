@@ -12,7 +12,7 @@ public class AttributeWithData : IAttributeWithData
     public string AttributeName { get; set; }
     public AttributeType AttributeType { get; set; }
     public string? DefaultLiteralValue { get; set; }
-    public IEnumerable<SelectableAttributeValue>? SelectableOptions { get; set; }
+    public IEnumerable<SelectableAttributeOption>? SelectableOptions { get; set; }
 
     public bool? IsMultipleSelect { get; set; }
 
