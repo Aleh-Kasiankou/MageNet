@@ -1,11 +1,13 @@
 ﻿using MageNetServices.AttributeRepository.DTO.Attributes;
 using MageNetServices.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MageNet.Controllers;
 
 [ApiController]
 [Route("attribute")]
+[Authorize]
 public class AttributeController : ControllerBase
 {
     private readonly IAttributeRepository _attributeRepository;
@@ -16,6 +18,7 @@ public class AttributeController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public IActionResult GetProductAttributes()
     {
         try
@@ -29,6 +32,7 @@ public class AttributeController : ControllerBase
     }
 
     [HttpGet("{guid:guid}")]
+    [Authorize]
     public IActionResult GetProductAttributeById(Guid guid)
     {
         try
@@ -42,6 +46,7 @@ public class AttributeController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public IActionResult PostAttribute([FromBody] PostAttributeWithData attributeWithData)
     {
         try
@@ -57,6 +62,7 @@ public class AttributeController : ControllerBase
 
 
     [HttpPut]
+    [Authorize]
     public IActionResult PutProductAttribute([FromBody] PutAttributeWithData putAttributeWithData)
     {
         try
@@ -72,6 +78,7 @@ public class AttributeController : ControllerBase
 
 
     [HttpDelete("{guid:guid}")]
+    [Authorize]
     public IActionResult DeleteProductAttribute([FromRoute] Guid guid)
     {
         try

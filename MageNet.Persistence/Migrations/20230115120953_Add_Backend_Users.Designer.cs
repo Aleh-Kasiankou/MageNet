@@ -4,6 +4,7 @@ using MageNet.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MageNet.Persistence.Migrations
 {
     [DbContext(typeof(MageNetDbContext))]
-    partial class MageNetDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230115120953_Add_Backend_Users")]
+    partial class Add_Backend_Users
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -150,14 +152,6 @@ namespace MageNet.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("BackendUsers");
-
-                    b.HasData(
-                        new
-                        {
-                            BackendUserId = new Guid("94e85a54-c2a9-4dcb-b123-6829be4f9d2c"),
-                            PasswordHash = "K7eZhJaJms3YE3+tOkT6+WqEoD1/IwzkLpfNF8euQp4=",
-                            UserName = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("MageNet.Persistence.Models.Entity", b =>
