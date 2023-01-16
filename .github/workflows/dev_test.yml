@@ -21,7 +21,7 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Restore dependencies
-        run: dotnet restore -s ./MageNet.API -s ./MageNet.Persistence -s ./MageNet.Services -s ./MageNet.UnitTesting -s ./MageNet.IntegrationTesting
+        run: dotnet restore ./MageNet.sln
       - name: Build
         run: dotnet build ./MageNet.sln --no-restore
       - name: Test
