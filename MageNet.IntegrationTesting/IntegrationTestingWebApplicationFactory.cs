@@ -1,7 +1,12 @@
 using System;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using MageNet.IntegrationTesting.Exceptions;
 using MageNet.Persistence;
+using MageNetServices.Authentication.DTO;
+using MageNetServices.Interfaces.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
@@ -30,6 +35,37 @@ public class IntegrationTestingWebApplicationFactory<TStartup> : WebApplicationF
         }
     }
 
+    public void ConfigureJwtToken(HttpClient httpClient)
+    {
+        using (var scope = Services.CreateScope())
+        {
+            var scopedServices = scope.ServiceProvider;
+            var loginHandler = scopedServices.GetRequiredService<ILoginHandler>();
+
+            var authResultTask = loginHandler.TryLogInBackendUser(new LoginData()
+            {
+                UserName = "Admin",
+                Password = "admin"
+            });
+
+            // running method synchronously since constructor cannot be async 
+            // and this method should be available in factory constructor
+
+            var authResult = authResultTask.Result;
+
+            if (authResult.IsAuthSuccessful)
+            {
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", $"{authResult.Token}");
+            }
+
+            else
+            {
+                throw new JwtTokenGenerationException("JWT Token for integration testing cannot be generated!");
+            }
+        }
+    }
+
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -47,7 +83,7 @@ public class IntegrationTestingWebApplicationFactory<TStartup> : WebApplicationF
                 _connection.Open();
                 options.UseSqlite(_connection);
             });
-            
+
             var sp = services.BuildServiceProvider();
 
             using (var scope = sp.CreateScope())

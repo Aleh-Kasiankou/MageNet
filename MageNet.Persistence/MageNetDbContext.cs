@@ -14,6 +14,8 @@ public class MageNetDbContext : DbContext
     public DbSet<SelectableAttributeOption> SelectableAttributeValues { get; set; }
     public DbSet<TextAttributeData> TextAttributes { get; set; }
 
+    public DbSet<BackendUser> BackendUsers { get; set; }
+
     public MageNetDbContext(DbContextOptions<MageNetDbContext> options) :
         base(options)
     {
@@ -93,5 +95,24 @@ public class MageNetDbContext : DbContext
         modelBuilder.Entity<SelectableAttributeOption>().Property(x => x.Value).HasColumnType("nvarchar(255)");
         modelBuilder.Entity<SelectableAttributeOption>().HasOne(x => x.Attribute)
             .WithMany(x => x.Values).HasForeignKey(x => x.AttributeDataId).OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<BackendUser>().HasKey(x => x.BackendUserId);
+        modelBuilder.Entity<BackendUser>().Property(x => x.UserName).IsRequired();
+        modelBuilder.Entity<BackendUser>().HasIndex(x => x.UserName).IsUnique();
+
+        modelBuilder.Entity<BackendUser>().Property(x => x.PasswordHash).IsRequired();
+        modelBuilder.Entity<BackendUser>().Property(x => x.PasswordHash).HasColumnType("nvarchar(255)");
+        
+        modelBuilder.Entity<BackendUser>().HasData(new List<BackendUser>()
+        {
+            new()
+            {
+               BackendUserId = Guid.Parse("94e85a54-c2a9-4dcb-b123-6829be4f9d2c"),
+               UserName = "Admin",
+               PasswordHash = "K7eZhJaJms3YE3+tOkT6+WqEoD1/IwzkLpfNF8euQp4="
+            }
+        });
+
+        
     }
 }
