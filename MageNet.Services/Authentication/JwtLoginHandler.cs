@@ -21,7 +21,7 @@ public class JwtLoginHandler : ILoginHandler
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyConfig.Value.Key));
     }
 
-    public async Task<(bool isAuthSuccessful, string? token)> TryLogInBackendUser(ILoginData loginData)
+    public async Task<(bool IsAuthSuccessful, string? Token)> TryLogInBackendUser(ILoginData loginData)
     {
         var user = await _dbContext.BackendUsers.SingleOrDefaultAsync(x => x.UserName == loginData.UserName);
 
@@ -44,6 +44,6 @@ public class JwtLoginHandler : ILoginHandler
             }
         }
 
-        return (isAuthSuccessful: false, token: null);
+        return (IsAuthSuccessful: false, Token: null);
     }
 }

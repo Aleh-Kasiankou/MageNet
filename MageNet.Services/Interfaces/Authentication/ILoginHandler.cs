@@ -4,5 +4,5 @@ namespace MageNetServices.Interfaces.Authentication;
 
 public interface ILoginHandler
 {
-    Task<(bool isAuthSuccessful, string? token)> TryLogInBackendUser(ILoginData loginData);
+    Task<(bool IsAuthSuccessful, string? Token)> TryLogInBackendUser(ILoginData loginData);
 }

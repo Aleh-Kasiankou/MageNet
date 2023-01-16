@@ -18,9 +18,9 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginData loginData)
     {
         var authResult = await _loginHandler.TryLogInBackendUser(loginData);
-        if (authResult.isAuthSuccessful)
+        if (authResult.IsAuthSuccessful)
         {
-            return Ok(authResult.token);
+            return Ok(authResult.Token);
         }
 
         return Unauthorized();

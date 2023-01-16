@@ -27,6 +27,9 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
         {
             AllowAutoRedirect = false
         });
+        
+        _factory.ConfigureJwtToken(_httpClient);
+        
     }
 
     [Fact]
@@ -511,13 +514,13 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
             .SingleAsync(data => data.AttributeId == selectableAttributeId));
 
         var defaultOption = savedAttribute.Values
-                .Single(x => x.IsDefaultValue && x.Value != "Untouchable");
+            .Single(x => x.IsDefaultValue && x.Value != "Untouchable");
 
         var nonDefaultOption = savedAttribute.Values
-                .Single(x => x.IsDefaultValue == false && x.Value != "Untouchable");
+            .Single(x => x.IsDefaultValue == false && x.Value != "Untouchable");
 
         var untouchableOption = savedAttribute.Values
-                .Single(x => x.Value == "Untouchable");
+            .Single(x => x.Value == "Untouchable");
 
         var putRequest = new PutAttributeWithData()
         {
@@ -838,7 +841,8 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
 
         Assert.True(response.IsSuccessStatusCode);
 
-        Assert.True(await _factory.UseDbContext(db => db.Attributes.AnyAsync(x => x.AttributeId == selectableAttributeId)));
+        Assert.True(await _factory.UseDbContext(db =>
+            db.Attributes.AnyAsync(x => x.AttributeId == selectableAttributeId)));
 
         Assert.True(await _factory.UseDbContext(db =>
             db.PriceAttributes.AnyAsync(x => x.AttributeId == selectableAttributeId)));
@@ -864,7 +868,7 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
     {
         // Arrange
         var selectableAttributeId = await CreateSelectableAttribute();
-        
+
         var putRequest = new PutAttributeWithData()
         {
             AttributeId = selectableAttributeId,
@@ -881,7 +885,8 @@ public class AttributeControllerTests : IClassFixture<IntegrationTestingWebAppli
 
         Assert.True(response.IsSuccessStatusCode);
 
-        Assert.True(await _factory.UseDbContext(db => db.Attributes.AnyAsync(x => x.AttributeId == selectableAttributeId)));
+        Assert.True(await _factory.UseDbContext(db =>
+            db.Attributes.AnyAsync(x => x.AttributeId == selectableAttributeId)));
 
         Assert.True(await _factory.UseDbContext(db =>
             db.TextAttributes.AnyAsync(x => x.AttributeId == selectableAttributeId)));
