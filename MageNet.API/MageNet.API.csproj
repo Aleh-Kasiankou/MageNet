@@ -21,10 +21,4 @@
       <ProjectReference Include="..\MageNet.Services\MageNet.Services.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
-    </ItemGroup>
-
 </Project>
