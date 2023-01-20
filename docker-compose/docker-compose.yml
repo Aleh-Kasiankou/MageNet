@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  
+  magenet:
+    container_name: magenet
+    hostname: magenet
+    depends_on: [mssql,]
+    build:
+      context: ../
+      dockerfile: ./MageNet.API/Dockerfile
+    ports:
+      - "25560:80"
+      - "25565:443"
+    restart: unless-stopped
+    networks:
+      - default
+    dns:
+      - 172.20.0.100
+  
+  mssql:
+    container_name: mssql
+    hostname: mssql
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    ports:
+      - "25564:1433"
+
+    environment:
+      SA_PASSWORD: "dockerStrongPassw0rd"
+      ACCEPT_EULA: "Y"
+
+    restart: unless-stopped
+    networks:
+      - default
+    dns:
+      - 172.20.0.101

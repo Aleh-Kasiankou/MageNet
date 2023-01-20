@@ -31,23 +31,22 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
 
-    if (app.Environment.IsEnvironment("Docker"))
+app.UseSwagger();
+app.UseSwaggerUI();
+
+if (app.Environment.IsEnvironment("Docker") || app.Environment.IsProduction())
+{
+    using (var scope = app.Services.CreateScope())
     {
-        using (var scope = app.Services.CreateScope())
+        var mageNetContext = scope.ServiceProvider.GetRequiredService<MageNetDbContext>();
+        if (mageNetContext.Database.IsRelational())
         {
-            var mageNetContext = scope.ServiceProvider.GetRequiredService<MageNetDbContext>();
-            if (mageNetContext.Database.IsRelational())
-            {
-                mageNetContext.Database.Migrate();
-            }
+            mageNetContext.Database.Migrate();
         }
     }
 }
+
 
 else
 {
