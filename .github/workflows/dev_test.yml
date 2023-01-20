@@ -5,9 +5,9 @@ name: .NET Build & Test
 
 on:
   push:
-    branches: [ "development", "development_actions_test" ]
+    branches: [ "development" ]
   pull_request:
-    branches: [ "master", "development", "development_actions_test"]
+    branches: [ "master", "development"]
 
 env:
   SLN_PATH: "./MageNet.sln"

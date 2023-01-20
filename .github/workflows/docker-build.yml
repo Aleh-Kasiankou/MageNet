@@ -2,9 +2,9 @@ name: .NET Create App Container
 
 on:
   push:
-    branches: [ "development", "development_actions_test" ]
+    branches: [ "main", "development" ]
   pull_request:
-    branches: [ "development", "development_actions_test"]
+    branches: [ "main", "development" ]
 
 
 jobs:
