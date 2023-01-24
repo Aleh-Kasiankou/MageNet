@@ -4,6 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <UserSecretsId>33f9dd80-cf06-42d6-b7ed-2c6ef012dbf6</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Models" />
+      <Folder Include="Migrations" />
     </ItemGroup>
 
 </Project>

@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MageNet.Services", "MageNet
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MageNet.Persistence", "MageNet.Persistence\MageNet.Persistence.csproj", "{F838DCC0-FE02-4374-86D0-67A93D78EED8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MageNet.UnitTesting", "MageNet.UnitTesting\MageNet.UnitTesting.csproj", "{738A66E6-EBC7-46E5-8A25-0151AD077160}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MageNet.IntegrationTesting", "MageNet.IntegrationTesting\MageNet.IntegrationTesting.csproj", "{64D81C10-5E46-4D05-8C44-083CED30AB14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{F838DCC0-FE02-4374-86D0-67A93D78EED8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F838DCC0-FE02-4374-86D0-67A93D78EED8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F838DCC0-FE02-4374-86D0-67A93D78EED8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{738A66E6-EBC7-46E5-8A25-0151AD077160}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{738A66E6-EBC7-46E5-8A25-0151AD077160}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{738A66E6-EBC7-46E5-8A25-0151AD077160}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{738A66E6-EBC7-46E5-8A25-0151AD077160}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64D81C10-5E46-4D05-8C44-083CED30AB14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64D81C10-5E46-4D05-8C44-083CED30AB14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64D81C10-5E46-4D05-8C44-083CED30AB14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64D81C10-5E46-4D05-8C44-083CED30AB14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
